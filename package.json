@@ -13,14 +13,22 @@
   "author": "sdm-group-6",
   "license": "ISC",
   "dependencies": {
+    "@teamwork/websocket-json-stream": "^2.0.0",
     "argon2": "^0.30.3",
     "dotenv": "^16.0.3",
+    "http": "^0.0.1-security",
     "koa": "^2.14.1",
     "koa-body": "^6.0.1",
     "koa-router": "^12.0.0",
     "koa-send": "^5.0.1",
     "koa-session": "^6.4.0",
-    "pg": "^8.10.0"
+    "mongodb": "^5.2.0",
+    "pg": "^8.10.0",
+    "redis": "^4.6.5",
+    "rich-text": "^4.1.0",
+    "sharedb": "^3.3.1",
+    "sharedb-redis-pubsub": "^3.0.0",
+    "ws": "^8.13.0"
   },
   "devDependencies": {
     "eslint": "^8.36.0",
