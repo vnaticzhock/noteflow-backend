@@ -7,6 +7,8 @@ import path from 'path';
 
 const spec = yamljs.load(path.resolve('./swagger.yaml'));
 
+import flowServiceRouter from './flowServices/service.js'
+
 const router = new Router()
   .get('/', async (ctx) => {
     ctx.body = 'hello world!';
