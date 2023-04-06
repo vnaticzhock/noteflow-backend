@@ -1,6 +1,11 @@
 import Router from 'koa-router';
-import argon2 from 'argon2';
-import postgre from './database.js';
+
+
+import { koaSwagger } from 'koa2-swagger-ui';
+import yamljs from 'yamljs';
+import path from 'path';
+
+const spec = yamljs.load(path.resolve('./swagger.yaml'));
 
 const router = new Router()
   .get('/', async (ctx) => {
@@ -8,27 +13,20 @@ const router = new Router()
     ctx.status = 200;
   })
   .post('/login', async (ctx) => {
-    const { account, password } = ctx.request.body;
-
-    if (!account || !password) {
-      ctx.throw(401, 'Data is missing.');
-    }
-
-    const { rows } = await postgre.query(
-      'SELECT * FROM users WHERE account = $1',
-      [account],
-    );
-
-    if (rows.length === 0) {
-      ctx.throw(401, `Unauthorized. User ${account} not found.`);
-    }
-
-    if (!(await argon2.verify(rows[0].password, password))) {
-      ctx.throw(401, 'Unauthorized. Password error');
-    }
-
-    ctx.session.logined = true;
-    ctx.status = 200;
-  });
-
+    getAccount(ctx);
+    
+  })
+  .post('/logout', async (ctx) => {
+    logout(ctx);
+  })
+  .get('/signup', async (ctx) => {
+    signup(ctx);
+  })
+  .get(
+    '/swagger',
+    koaSwagger({
+      routePrefix: false,
+      swaggerOptions: { spec },
+    }),
+  );
 export default router;

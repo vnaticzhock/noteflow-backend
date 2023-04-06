@@ -17,10 +17,15 @@
     "dotenv": "^16.0.3",
     "koa": "^2.14.1",
     "koa-body": "^6.0.1",
+    "koa-passport": "^6.0.0",
     "koa-router": "^12.0.0",
     "koa-send": "^5.0.1",
     "koa-session": "^6.4.0",
-    "pg": "^8.10.0"
+    "koa2-swagger-ui": "^5.7.0",
+    "mongoose": "^7.0.3",
+    "pg": "^8.10.0",
+    "sequelize": "^6.30.0",
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "eslint": "^8.36.0",
