@@ -52,20 +52,20 @@ function MyComponent() {
 在 Flow 心智圖的部分
 ```javascript
 /* 與創造元素相關 */
-function ONCREATE(e)
-function ONDELETE(e)
+function ON_CREATE(e)
+function ON_DELETE(e)
 
 /* 與變動現成元素相關 */
-function ONCHOOSE(e) // 選擇的時候其他人要看到變色（變透明？）
-function DECHOOSE(e) // 取消變色
-function MOUSEDOWN(e)
-function DRAGSTART(e) // 檢查別人有沒有 lock, 沒有的話取得 lock, 有的話會在 MOUSEUP 的時候取得 fail 的資訊，返回到 Server 現在認知的位置
+function ON_CHOOSE(e) // 選擇的時候其他人要看到變色（變透明？）
+function DE_CHOOSE(e) // 取消變色
+function MOUSE_DOWN(e)
+function DRAG_START(e) // 檢查別人有沒有 lock, 沒有的話取得 lock, 有的話會在 MOUSEUP 的時候取得 fail 的資訊，返回到 Server 現在認知的位置
 function DROP(e)
-function DRAGOVER(e) // 跟 DROP 可能是一樣的，總之，會取得 success 或 fail 的資訊，如果 success 的話，會同步到其他的裝置上
-function MOUSEUP(e)
+function DRAG_OVER(e) // 跟 DROP 可能是一樣的，總之，會取得 success 或 fail 的資訊，如果 success 的話，會同步到其他的裝置上
+function MOUSE_UP(e)
 
 /* 與變動 Markdown 相關 */
-function ONEDITING(e)
+function ON_EDITING(e)
 // 其他可能必須仰賴 ot.js or sharedb
 ```
 #### [ot.js-Github](https://github.com/Operational-Transformation/ot.js)
