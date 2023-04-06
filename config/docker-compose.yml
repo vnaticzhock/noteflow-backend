@@ -32,17 +32,17 @@ services:
     volumes:
       - data:/var/lib/postgresql/data
     ports:
-      - 5433:5432
+      - 5432:5432
     env_file: .env
     environment:
       POSTGRES_DB: $POSTGRES_DB
       POSTGRES_USER: $POSTGRES_USER
       POSTGRES_PASSWORD: $POSTGRES_PASSWORD
 
-  redis:
-    image: "redis-noteflow"
-    ports:
-      - 6379:6379
+  # redis:
+  #   image: "redis-noteflow"
+  #   ports:
+  #     - 6379:6379
 
 volumes:
   data:
