@@ -31,7 +31,7 @@ const router = new Router()
 
     ctx.session.logined = true;
     ctx.status = 200;
-  });
+  })
   .use('/service', flowServiceRouter.routes());
 
 export default router;
