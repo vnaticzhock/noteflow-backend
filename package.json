@@ -15,9 +15,11 @@
   "dependencies": {
     "@teamwork/websocket-json-stream": "^2.0.0",
     "argon2": "^0.30.3",
+    "bcrypt": "^5.1.0",
     "dotenv": "^16.0.3",
     "fs": "^0.0.1-security",
     "http": "^0.0.1-security",
+    "humps": "^2.0.1",
     "knex": "^2.4.2",
     "koa": "^2.14.1",
     "koa-body": "^6.0.1",
