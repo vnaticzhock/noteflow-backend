@@ -14,4 +14,4 @@ router.get(
   }),
 );
 
-module.exports = router.routes()
+export default router.routes();

@@ -1,7 +1,7 @@
 const user = require('./user-schema');
 
-module.exports = function (app) {
-  app.schemas = {
-    user
-  };
-};
+export default function (app) {
+    app.schemas = {
+      user
+    };
+}

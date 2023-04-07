@@ -8,7 +8,7 @@ import WebSocket, { WebSocketServer } from 'ws';
 import http from 'http';
 import WebSocketJSONStream from '@teamwork/websocket-json-stream';
 
-import sharedb from './database/sharedb.js';
+// import sharedb from './database/sharedb.js';
 import routes from './routes/index.js';
 // const routes = require("../routes")
 

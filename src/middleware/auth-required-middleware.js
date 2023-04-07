@@ -1,6 +1,13 @@
-const { AuthenticationError } = require('../lib/errors');
+import { AuthenticationError } from '../lib/errors.js';
 
-module.exports = function (ctx, next) {
-  ctx.assert(ctx.state.user, new AuthenticationError());
-  return next();
+export default async (req, res, next) => {
+  try {
+    await next();
+  } catch (error) {
+    if (error instanceof AuthenticationError) {
+      res.status(401).json({ error: error.message });
+    } else {
+      throw error;
+    }
+  }
 };

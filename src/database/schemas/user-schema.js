@@ -27,4 +27,5 @@ const userSchema = yup
   .noUnknown()
   .concat(timeStampSchema);
 
-module.exports = userSchema;
+export default userSchema;
+

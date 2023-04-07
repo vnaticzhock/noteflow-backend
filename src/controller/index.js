@@ -1,5 +1,5 @@
 const users = require("./user-controller")
 
-module.exports = {
+export default {
   users
 }

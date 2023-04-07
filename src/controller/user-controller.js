@@ -1,14 +1,13 @@
-const humps = require('humps');
-const uuid = require('uuid');
-const _ = require('lodash');
-const bcrypt = require('bcrypt');
-const { ValidationError } = require('../lib/errors');
-const { generateJWTforUser } = require('../lib/utils');
-const db = require('../lib/db');
+import humps from 'humps';
+import { v4 as uuidv4 } from 'uuid';
+import _ from 'lodash';
+import pkg from 'bcrypt';
+import { ValidationError } from '../lib/errors.js';
+import db from '../lib/db.js';
 
-module.exports = {
+export default {
   async get(ctx) {
-    const user = generateJWTforUser(ctx.state.user);
+    // const user = generateJWTforUser(ctx.state.user);
 
     ctx.body = { user };
   },
@@ -18,11 +17,11 @@ module.exports = {
     let { user = {} } = body;
     const opts = { abortEarly: false, context: { validatePassword: true } };
 
-    user.id = uuid();
+    user.id = uuidv4();
 
     user = await ctx.app.schemas.user.validate(user, opts);
-
-    user.password = await bcrypt.hash(user.password, 10);
+    
+    user.password = await pkg.hash(user.password, 10);
 
     await db('users').insert(humps.decamelizeKeys(user));
 
@@ -44,14 +43,14 @@ module.exports = {
     user = await ctx.app.schemas.user.validate(user, opts);
 
     if (fields.password) {
-      user.password = await bcrypt.hash(user.password, 10);
+      user.password = await pkg.hash(user.password, 10);
     }
 
     user.updatedAt = new Date().toISOString();
 
     await db('users').where({ id: user.id }).update(humps.decamelizeKeys(user));
 
-    user = generateJWTforUser(user);
+    // user = generateJWTforUser(user);
 
     ctx.body = { user: _.omit(user, ['password']) };
   },
@@ -73,7 +72,7 @@ module.exports = {
       new ValidationError(['is invalid'], '', 'email or password'),
     );
 
-    const isValid = await bcrypt.compare(body.user.password, user.password);
+    const isValid = await pkg.compare(body.user.password, user.password);
 
     ctx.assert(
       isValid,
@@ -81,7 +80,7 @@ module.exports = {
       new ValidationError(['is invalid'], '', 'email or password'),
     );
 
-    user = generateJWTforUser(user);
+    // user = generateJWTforUser(user);
 
     ctx.body = { user: _.omit(user, ['password']) };
   },

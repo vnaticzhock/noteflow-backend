@@ -1,5 +1,5 @@
-const { ValidationError } = require('yup');
-const http = require('http');
+import ValidationError from 'yup';
+import http from 'http';
 
 class AuthenticationError extends Error {
   constructor(message = http.STATUS_CODES[401]) {
@@ -45,7 +45,7 @@ class ServerError extends Error {
   }
 }
 
-module.exports = {
+export {
   AuthenticationError,
   AuthorizationError,
   NotFoundError,

@@ -1,7 +1,7 @@
 const errors = require('../lib/errors');
 const _ = require('lodash');
 
-module.exports = async (ctx, next) => {
+export default async (ctx, next) => {
   try {
     await next();
     ctx.assert(ctx.response.body && Number(ctx.response.status) !== 404, 404);
