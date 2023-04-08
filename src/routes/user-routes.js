@@ -5,7 +5,6 @@ import { auth } from '../middleware/auth-required-middleware.js';
 
 const router = new Router();
 
-router.get('/user/login', userController.loginPage);
 router.post('/user/login', userController.login);
 router.post('/user/logout', userController.logout);
 router.post('/user/register', userController.register);

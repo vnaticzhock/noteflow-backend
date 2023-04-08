@@ -3,18 +3,30 @@ import ShareDB from 'sharedb';
 import richText from 'rich-text';
 
 import RedisPubSub from 'sharedb-redis-pubsub';
-import { createClient } from 'redis';
+import Redis from 'ioredis';
 import { MongoClient } from 'mongodb';
 import * as dotenv from 'dotenv';
 
-dotenv.config();
+dotenv.config({ path: `${process.cwd()}/config/.env.development` });
 
 // initialize redis client
 // eslint-disable-next-line object-curly-newline
 const { REDIS_ACCOUNT, REDIS_PASSWORD, REDIS_HOST, REDIS_PORT } = process.env;
 
-const redisClient = createClient({
-  url: `redis://${REDIS_ACCOUNT}:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}`,
+const redisClient = new Redis({
+  host: REDIS_HOST,
+  port: REDIS_PORT,
+  password: REDIS_PASSWORD,
+  username: REDIS_ACCOUNT,
+  // enableReadyCheck: false,
+});
+
+const redisObserver = new Redis({
+  host: REDIS_HOST,
+  port: REDIS_PORT,
+  password: REDIS_PASSWORD,
+  username: REDIS_ACCOUNT,
+  // enableReadyCheck: false,
 });
 
 // initialize mongodb client
@@ -32,9 +44,9 @@ ShareDB.types.register(richText); // allow sharedb to colab with rich text forma
 const sharedb = new ShareDB({
   presence: true,
   doNotForwardSendPresenceErrorsToClient: true,
-  pubsub: RedisPubSub({ client: redisClient }),
+  pubsub: RedisPubSub({ client: redisClient, observer: redisObserver }),
   db: mongoClient,
 });
 
 export default sharedb;
-export { mongoClient };
+export { mongoClient, redisClient };
