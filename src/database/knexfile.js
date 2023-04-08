@@ -1,9 +1,5 @@
 import path from 'path';
-import dotenv from 'dotenv';
 const BASE_PATH = `${process.cwd()}`;
-dotenv.config({path: "/src/database/knexfile.file.js"});
-
-
 
 export default {
 	test: {
