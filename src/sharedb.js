@@ -37,3 +37,4 @@ const sharedb = new ShareDB({
 });
 
 export default sharedb;
+export { mongoClient };

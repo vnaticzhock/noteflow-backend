@@ -2,7 +2,7 @@ import Router from 'koa-router';
 import argon2 from 'argon2';
 import postgre from './database.js';
 
-import flowServiceRouter from './flowServices/service.js'
+import flowServiceRouter from './flowServices/service.js';
 
 const router = new Router()
   .get('/', async (ctx) => {
@@ -30,8 +30,9 @@ const router = new Router()
     }
 
     ctx.session.logined = true;
+    ctx.session.account = account;
     ctx.status = 200;
-  });
+  })
   .use('/service', flowServiceRouter.routes());
 
 export default router;
