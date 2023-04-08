@@ -1,4 +1,4 @@
-import ValidationError from 'yup';
+// import { ValidationError } from 'yup';
 import http from 'http';
 
 class AuthenticationError extends Error {
@@ -45,10 +45,10 @@ class ServerError extends Error {
   }
 }
 
-export {
+export default{
   AuthenticationError,
   AuthorizationError,
   NotFoundError,
-  ValidationError,
+  // ValidationError,
   ServerError,
 };

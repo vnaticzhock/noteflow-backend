@@ -8,8 +8,8 @@ const api = new Router();
 
 api.use(users)
 api.use(swagger)
-api.use(flowServiceRouter)
+// api.use(flowServiceRouter)
 
 router.use("/api", api.routes())
 
-export default router.routes();
+export default router;

@@ -2,24 +2,24 @@
 import Koa from 'koa';
 import { koaBody } from 'koa-body';
 import session from 'koa-session';
-import * as dotenv from 'dotenv';
-
+import dotenv from 'dotenv';
 import WebSocket, { WebSocketServer } from 'ws';
 import http from 'http';
 import WebSocketJSONStream from '@teamwork/websocket-json-stream';
-
-// import sharedb from './database/sharedb.js';
+// import db from 'lib/db.js';
 import routes from './routes/index.js';
-// const routes = require("../routes")
 
-require("../schemas")(app)
 
-const responseTime = require("koa-response-time")
-const helmet = require("koa-helmet")
-const logger = require("koa-logger")
-const error = require("../middleware/error-middleware")
+// require("../schemas")(app)
+import responseTime from 'koa-response-time';
+import xRequestId from 'koa-x-request-id';
+import helmet from 'koa-helmet';
+import logger from 'koa-logger';
+import cors from 'kcors';
+import error from './middleware/error-middleware.js';
 
-dotenv.config();
+const BASE_PATH = `${process.cwd()}`;
+dotenv.config({path: "config/.env.development"});
 
 const app = new Koa();
 app.use(responseTime())

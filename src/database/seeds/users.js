@@ -1,5 +1,5 @@
-const bcrypt = require('bcrypt');
-const faker = require('faker');
+import bcrypt from 'bcrypt';
+import faker from 'faker';
 
 const users = [
   {

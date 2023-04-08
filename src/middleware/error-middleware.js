@@ -1,5 +1,5 @@
-const errors = require('../lib/errors');
-const _ = require('lodash');
+import errors from '../lib/errors.js';
+import _ from 'lodash';
 
 export default async (ctx, next) => {
   try {
@@ -64,15 +64,15 @@ export default async (ctx, next) => {
   }
 };
 
-function formatValidationError(err) {
-  const result = {};
-  if (err.path) {
-    result[err.path] = [_.defaultTo(err.message, 'is not valid')];
-  }
-  if (err.inner && err.inner.length > 0) {
-    err.inner
-      .map((err) => formatValidationError(err))
-      .reduce((prev, curr) => Object.assign(prev, curr), result);
-  }
-  return result;
-}
+// function formatValidationError(err) {
+//   const result = {};
+//   if (err.path) {
+//     result[err.path] = [_.defaultTo(err.message, 'is not valid')];
+//   }
+//   if (err.inner && err.inner.length > 0) {
+//     err.inner
+//       .map((err) => formatValidationError(err))
+//       .reduce((prev, curr) => Object.assign(prev, curr), result);
+//   }
+//   return result;
+// }

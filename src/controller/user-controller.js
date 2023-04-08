@@ -2,7 +2,7 @@ import humps from 'humps';
 import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
 import pkg from 'bcrypt';
-import { ValidationError } from '../lib/errors.js';
+// import { ValidationError } from '../lib/errors.js';
 import db from '../lib/db.js';
 
 export default {
@@ -61,7 +61,7 @@ export default {
     ctx.assert(
       _.isObject(body.user) && body.user.email && body.user.password,
       422,
-      new ValidationError(['malformed request'], '', 'email or password'),
+      // new ValidationError(['malformed request'], '', 'email or password'),
     );
 
     let user = await db('users').first().where({ email: body.user.email });
@@ -69,7 +69,7 @@ export default {
     ctx.assert(
       user,
       401,
-      new ValidationError(['is invalid'], '', 'email or password'),
+      // new ValidationError(['is invalid'], '', 'email or password'),
     );
 
     const isValid = await pkg.compare(body.user.password, user.password);
@@ -77,7 +77,7 @@ export default {
     ctx.assert(
       isValid,
       401,
-      new ValidationError(['is invalid'], '', 'email or password'),
+      // new ValidationError(['is invalid'], '', 'email or password'),
     );
 
     // user = generateJWTforUser(user);
