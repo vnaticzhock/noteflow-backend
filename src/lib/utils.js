@@ -1,9 +1,11 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import config from 'config';
 import jwt from 'jsonwebtoken';
 import _ from 'lodash';
 
 export function generateJWTforUser(user = {}) {
-  return Object.assign({}, user, {
+  return {
+    ...user,
     token: jwt.sign(
       {
         sub: _.pick(user, ['id', 'email', 'username']),
@@ -13,7 +15,7 @@ export function generateJWTforUser(user = {}) {
         expiresIn: '7d',
       },
     ),
-  });
+  };
 }
 
 export function getSelect(table, prefix, fields) {

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import bcrypt from 'bcrypt';
 import { faker } from '@faker-js/faker';
 
@@ -25,19 +26,17 @@ const users = [
 ];
 
 export function getUsers() {
-  return users.map((u) => {
-    return {
-      id: u.id,
-      email: u.email || `${u.name}@demo.com`,
-      name: u.name,
-      password: bcrypt.hashSync('X12345678', 10),
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    };
-  });
+  return users.map((u) => ({
+    id: u.id,
+    email: u.email || `${u.name}@demo.com`,
+    name: u.name,
+    password: bcrypt.hashSync('X12345678', 10),
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  }));
 }
 
-export async function seed (knex) {
+export async function seed(knex) {
   if (process.env.NODE_ENV === 'production') {
     await knex('users')
       .whereIn(
@@ -50,4 +49,4 @@ export async function seed (knex) {
   }
 
   return knex('users').insert(getUsers());
-};
+}

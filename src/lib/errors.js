@@ -1,4 +1,4 @@
-import { ValidationError } from 'yup';
+/* eslint-disable max-classes-per-file */
 import http from 'http';
 
 class AuthenticationError extends Error {
@@ -45,7 +45,7 @@ class ServerError extends Error {
   }
 }
 
-export default{
+export default {
   AuthenticationError,
   AuthorizationError,
   NotFoundError,
