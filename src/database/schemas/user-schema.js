@@ -18,11 +18,7 @@ const userSchema = yup
       then: yup.string().required().min(8).max(30),
     }),
 
-    username: yup.string().required().max(30).default('').trim(),
-
-    image: yup.string().url().default('').trim(),
-
-    bio: yup.string().default('').trim(),
+    name: yup.string().required().max(30).default('').trim(),
   })
   .noUnknown()
   .concat(timeStampSchema);

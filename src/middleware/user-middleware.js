@@ -7,9 +7,7 @@ export default async (ctx, next) => {
       .first(
         'id',
         'email',
-        'username',
-        'image',
-        'bio',
+        'name',
         'created_at',
         'updated_at',
       )
