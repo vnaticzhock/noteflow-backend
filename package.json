@@ -5,10 +5,13 @@
   "type": "module",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon ./src/app.js",
+    "start": "set NODE_ENV=development&& npx nodemon ./src/app.js",
+    "start-prod": "set NODE_ENV=production && npx nodemon ./src/app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prettier": "prettier --config .prettierrc 'src/**/*.js' --write",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:migrate": "knex --knexfile src/database/knexfile.js migrate:latest",
+    "db:rollback": "knex --knexfile src/database/knexfile.js migrate:rollback"
   },
   "author": "sdm-group-6",
   "license": "ISC",
@@ -20,6 +23,7 @@
     "fs": "^0.0.1-security",
     "http": "^0.0.1-security",
     "humps": "^2.0.1",
+    "kcors": "^2.2.2",
     "knex": "^2.4.2",
     "koa": "^2.14.1",
     "koa-body": "^6.0.1",
@@ -40,6 +44,7 @@
     "sequelize": "^6.30.0",
     "sharedb": "^3.3.1",
     "sharedb-redis-pubsub": "^3.0.0",
+    "url": "^0.11.0",
     "ws": "^8.13.0",
     "yamljs": "^0.3.0",
     "yup": "^1.0.2"

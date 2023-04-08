@@ -1,3 +1,40 @@
+# noteflow-backend
+
+## 常用port(localhost)
+|  port   | services  |
+|  ----  | ----  |
+| 3000  | node.js |
+| 27017  | mongo |
+| 8081  | mongo express |
+| 5432  | postgresql |
+| 6379  | redis |
+
+## configuration
+1. config 檔案皆在 /config/*
+2. Database
+```bash=
+# migrate
+npm run db:migrate
+```
+
+```bash=
+# rollback
+npm run db:rollback
+```
+
+3. docker
+```bash=
+docker compose --env-file ./config/.env.development up -d
+```
+
+4. node.js
+```bash=
+npm run start
+```
+
+### development tools
+> vscode, docker, pgadmin, postman
+
 ### 這個資料夾的樹狀結構
 ```
 ├── node_modules        npm install 載好的 library 在這裡面
@@ -26,7 +63,7 @@ npm install
 
 使用以下指令，把 MongoDB 給起起來
 ```bash
-docker compose up -d
+docker compose --env-file ./config/.env.development up -d
 ## 可以使用 docker compose down 關閉
 ```
 
