@@ -32,6 +32,10 @@ docker compose --env-file ./config/.env.development up -d
 npm run start
 ```
 
+### Documentation
+1. API documentation
+> localhost:3000/swagger
+
 ### development tools
 > vscode, docker, pgadmin, postman
 
