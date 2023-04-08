@@ -4,7 +4,7 @@ info:
   description: 詳情請查閱 [github](https://github.com/vnaticzhock/noteflow-backend)
   version: 0.1
 servers:
-  - url: http://localhost/
+  - url: http://localhost:3000/
     description: main server
 
 
@@ -19,6 +19,13 @@ paths:
       summary: get user's JWT
       tags:
         - user
+      responses:
+        '200':    # status code
+          description: get user token
+          content:
+            application/json:
+              schema: 
+                type: json
     put:
       summary: 更新使用者資訊
       tags:
