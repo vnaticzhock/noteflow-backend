@@ -4,10 +4,12 @@ import userController from '../controller/user-controller.js';
 import { auth } from '../middleware/auth-required-middleware.js';
 const router = new Router()
 
-// router.post("/users/login", userController.login)
-// router.post("/users", userController.post)
+router.get("/user/login", userController.loginPage)
+router.post("/user/login", userController.login)
+router.post("/user/logout", userController.logout)
+router.post("/user/register", userController.register)
 
-// router.get("/user", auth, userController.get)
-// router.put("/user", auth, userController.put)
+router.get("/user", auth, userController.getUserToken)
+router.put("/user", auth, userController.updateUserInfo)
 
 export default router.routes();

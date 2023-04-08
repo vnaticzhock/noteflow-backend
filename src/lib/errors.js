@@ -1,4 +1,4 @@
-// import { ValidationError } from 'yup';
+import { ValidationError } from 'yup';
 import http from 'http';
 
 class AuthenticationError extends Error {
@@ -49,6 +49,5 @@ export default{
   AuthenticationError,
   AuthorizationError,
   NotFoundError,
-  // ValidationError,
   ServerError,
 };

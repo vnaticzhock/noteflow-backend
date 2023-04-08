@@ -1,44 +1,43 @@
 import bcrypt from 'bcrypt';
-import faker from 'faker';
+import { faker } from '@faker-js/faker';
 
 const users = [
   {
     name: 'admin',
-    id: '345ae4d0-f2c3-4342-91a2-5b45cb8db57f',
+    email: 'admin@gmail.com',
+    id: '1',
   },
   {
     name: 'demo',
-    id: '16c1ef84-df72-4be1-ad46-1168ee53cd60',
+    email: 'demo@gmail.com',
+    id: '2',
   },
   {
     name: 'jack',
-    id: 'b8d2586f-4746-418c-82b2-db9eff7a7f42',
+    email: 'jack@gmail.com',
+    id: '3',
   },
   {
     name: 'johnjacob',
-    email: 'john@jacob.com',
-    id: '52e1cc10-20b9-4cf2-ad94-3b0c135d35a5',
+    email: 'john@gmail.com',
+    id: '4',
   },
 ];
 
-function getUsers() {
+export function getUsers() {
   return users.map((u) => {
     return {
       id: u.id,
       email: u.email || `${u.name}@demo.com`,
-      username: u.name,
+      name: u.name,
       password: bcrypt.hashSync('X12345678', 10),
-      bio: faker.lorem.sentences(),
-      image: faker.image.avatar(),
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
   });
 }
 
-exports.getUsers = getUsers;
-
-exports.seed = async function (knex) {
+export async function seed (knex) {
   if (process.env.NODE_ENV === 'production') {
     await knex('users')
       .whereIn(

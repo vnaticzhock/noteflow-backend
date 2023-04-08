@@ -23,10 +23,10 @@ export default async (ctx, next) => {
     console.error(err);
 
     switch (true) {
-      case err instanceof errors.ValidationError:
-        ctx.body.errors = formatValidationError(err);
-        ctx.status = _.defaultTo(status, 422);
-        break;
+      // case err instanceof errors.ValidationError:
+      //   ctx.body.errors = formatValidationError(err);
+      //   ctx.status = _.defaultTo(status, 422);
+      //   break;
 
       case err.code === 'SQLITE_CONSTRAINT': {
         let path = 'unknown';

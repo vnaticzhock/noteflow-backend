@@ -17,6 +17,7 @@ import helmet from 'koa-helmet';
 import logger from 'koa-logger';
 import cors from 'kcors';
 import error from './middleware/error-middleware.js';
+import KoaStatic from 'koa-static';
 
 const BASE_PATH = `${process.cwd()}`;
 dotenv.config({path: "config/.env.development"});
@@ -25,7 +26,7 @@ const app = new Koa();
 app.use(responseTime())
 app.use(xRequestId({ inject: true }, app))
 app.use(logger())
-app.use(helmet())
+// app.use(helmet())
 app.use(
   cors({
     origin: "*",
@@ -53,7 +54,7 @@ app.use(session(SESSION_CONFIG, app));
 app.use(koaBody());
 app.use(routes.routes());
 app.use(routes.allowedMethods());
-
+app.use(KoaStatic('static'));
 // const server = http.createServer(app);
 // const wss = new WebSocketServer({ port: 8091});
 
