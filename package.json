@@ -17,6 +17,7 @@
   "author": "sdm-group-6",
   "license": "ISC",
   "dependencies": {
+    "@koa/cors": "^4.0.0",
     "@teamwork/websocket-json-stream": "^2.0.0",
     "argon2": "^0.30.3",
     "bcrypt": "^5.1.0",
@@ -49,6 +50,7 @@
     "redis": "^4.6.5",
     "rich-text": "^4.1.0",
     "sequelize": "^6.30.0",
+    "sha.js": "^2.4.11",
     "sharedb": "^3.3.1",
     "sharedb-redis-pubsub": "^3.0.0",
     "url": "^0.11.0",

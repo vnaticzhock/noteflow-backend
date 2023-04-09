@@ -1,7 +1,8 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import humps from 'humps';
 import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
-import pkg from 'bcrypt';
+import argon2 from 'argon2';
 import { ValidationError } from 'yup';
 import db from '../lib/db.js';
 import { generateJWTforUser } from '../lib/utils.js';
@@ -12,44 +13,70 @@ export default {
 
     ctx.body = { user };
   },
+  async google_login(ctx) {
+    let { user } = ctx.request.body;
 
-  async loginPage(ctx) {
-    //TODO
+    if (!user) {
+      ctx.throw(400, "Bad request. You didn't provide user column.");
+    }
 
-    ctx.body = { todo };
-  },
-  async register(ctx) {
-    const { body } = ctx.request;
-    let { user = {} } = body;
-    const opts = { abortEarly: false, context: { validatePassword: true } };
+    const userSelected = await db('users').first().where({ email: user.email });
 
+    if (userSelected) {
+      // 可以登入
+      user = generateJWTforUser(user);
+      ctx.status = 200;
+      ctx.body = JSON.stringify({ user: _.omit(user, ['password']) });
+      return;
+    }
+
+    // 要註冊
     user.id = uuidv4();
-
-    user = await ctx.app.schemas.user.validate(user, opts);
-    
-    user.password = await pkg.hash(user.password, 10);
+    user.password = await argon2.hash('123');
 
     await db('users').insert(humps.decamelizeKeys(user));
 
     user = generateJWTforUser(user);
 
     ctx.body = { user: _.omit(user, ['password']) };
+    ctx.status = 200;
+  },
+  async register(ctx) {
+    let { user } = ctx.request.body; // if none, assign user with {}
+
+    if (!user) {
+      ctx.throw(400, "Bad request. You didn't provide user column.");
+    }
+
+    user.id = uuidv4();
+
+    const opts = { abortEarly: false, context: { validatePassword: true } };
+    user = await ctx.app.schemas.user.validate(user, opts);
+
+    user.password = await argon2.hash(user.password);
+
+    await db('users').insert(humps.decamelizeKeys(user));
+
+    user = generateJWTforUser(user);
+
+    ctx.status = 200;
+    ctx.body = { user: _.omit(user, ['password']) };
   },
 
   async updateUserInfo(ctx) {
     const { body } = ctx.request;
-    let { user: fields = {} } = body;
+    const { user: fields = {} } = body;
     const opts = { abortEarly: false, context: { validatePassword: false } };
 
     if (fields.password) {
       opts.context.validatePassword = true;
     }
 
-    let user = Object.assign({}, ctx.state.user, fields);
+    let user = { ...ctx.state.user, ...fields };
     user = await ctx.app.schemas.user.validate(user, opts);
 
     if (fields.password) {
-      user.password = await pkg.hash(user.password, 10);
+      user.password = await argon2.hash(user.password);
     }
 
     user.updatedAt = new Date().toISOString();
@@ -59,11 +86,11 @@ export default {
     user = generateJWTforUser(user);
 
     ctx.body = { user: _.omit(user, ['password']) };
+    ctx.status = 200;
   },
 
   async login(ctx) {
     const { body } = ctx.request;
-
     ctx.assert(
       _.isObject(body.user) && body.user.email && body.user.password,
       422,
@@ -71,14 +98,13 @@ export default {
     );
 
     let user = await db('users').first().where({ email: body.user.email });
-
     ctx.assert(
       user,
       401,
       new ValidationError(['is invalid'], '', 'email or password'),
     );
 
-    const isValid = await pkg.compare(body.user.password, user.password);
+    const isValid = await argon2.verify(user.password, body.user.password);
 
     ctx.assert(
       isValid,
@@ -86,12 +112,18 @@ export default {
       new ValidationError(['is invalid'], '', 'email or password'),
     );
 
-    user = generateJWTforUser(user);
+    user = generateJWTforUser(user); // 裡面加入 token
 
-    ctx.body = { user: _.omit(user, ['password']) };
+    ctx.status = 200;
+    ctx.body = JSON.stringify({ user: _.omit(user, ['password']) }); // 把 password 給挑掉
+
+    ctx.session = {
+      logined: true,
+      ..._.omit(user, ['id', 'created_at', 'updated_at']),
+    };
   },
-  async logout(ctx) {
-    //todo
 
+  async logout(ctx) {
+    // todo
   },
 };

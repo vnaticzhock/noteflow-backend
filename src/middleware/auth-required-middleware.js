@@ -2,5 +2,5 @@
 
 export function auth(ctx, next) {
   // ctx.assert(ctx.state.user, new AuthenticationError())
-  return next()
+  return next();
 }

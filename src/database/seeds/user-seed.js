@@ -1,42 +1,31 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import bcrypt from 'bcrypt';
-import { faker } from '@faker-js/faker';
+import argon2 from 'argon2';
+import shajs from 'sha.js';
 
-const users = [
+const PrepareData = async () => [
   {
     name: 'admin',
     email: 'admin@gmail.com',
     id: '1',
-  },
-  {
-    name: 'demo',
-    email: 'demo@gmail.com',
-    id: '2',
-  },
-  {
-    name: 'jack',
-    email: 'jack@gmail.com',
-    id: '3',
-  },
-  {
-    name: 'johnjacob',
-    email: 'john@gmail.com',
-    id: '4',
+    password: await argon2.hash(shajs('sha256').update('112a').digest('hex')),
   },
 ];
 
-export function getUsers() {
+export async function getUsers() {
+  const users = await PrepareData();
+
   return users.map((u) => ({
     id: u.id,
     email: u.email || `${u.name}@demo.com`,
     name: u.name,
-    password: bcrypt.hashSync('X12345678', 10),
+    password: u.password,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   }));
 }
 
 export async function seed(knex) {
+  const users = await PrepareData();
   if (process.env.NODE_ENV === 'production') {
     await knex('users')
       .whereIn(
@@ -48,5 +37,5 @@ export async function seed(knex) {
     await knex('users').del();
   }
 
-  return knex('users').insert(getUsers());
+  return knex('users').insert(await getUsers());
 }

@@ -4,14 +4,12 @@ import swagger from './swagger-routes.js';
 // import flowServiceRouter from '../service/flowServices/service.js';
 
 const router = new Router();
-const api = new Router();
+const api = new Router().use(users);
 
-api.use(users);
-// api.use(flowServiceRouter)
-
-router.get('/', async (ctx) => {
+router.get('/hello-world', async (ctx) => {
   ctx.body = 'hello world!';
   ctx.status = 200;
+  console.log(ctx);
 });
 router.use('/swagger', swagger);
 router.use('/api', api.routes());

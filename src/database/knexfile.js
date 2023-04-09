@@ -2,7 +2,7 @@ import path from 'path';
 import * as dotenv from 'dotenv';
 
 const BASE_PATH = `${process.cwd()}`;
-dotenv.config({ path: `${BASE_PATH}/config/.env.development` });
+dotenv.config({ path: `${BASE_PATH}/../../config/.env.development` });
 
 const {
   POSTGRES_HOST,
