@@ -1,3 +1,56 @@
+# noteflow-backend
+
+```bash
+## docker 版的 redis 常常會有連線不順的問題，所以在 docker compose 完後，需要運行另一個腳本：
+## 1. 先將一般的資料庫起起來
+docker compose --env-file ./config/.env.development up -d   
+## 2. 運行 local 的 redis-server，如果沒有 redis-server 可以 brew install redis  
+chmod 777 ./redis/run_redis_local.sh
+./redis/run_redis_local.sh  
+```
+
+## 常用port(localhost)
+|  port   | services  |
+|  ----  | ----  |
+| 3000  | node.js |
+| 27017  | mongo |
+| 8081  | mongo express |
+| 5432  | postgresql |
+| 6379  | redis |
+| 6380  | redis(session) |
+
+## configuration
+1. config 檔案皆在 /config/*
+2. Database
+```bash
+# migrate
+npm run db:migrate
+```
+
+```bash
+# rollback
+npm run db:rollback
+```
+
+3. docker
+```bash
+docker compose --env-file ./config/.env.development up -d
+## 可以使用 docker compose down 關閉
+docker compose --env-file ./config/.env.development down
+```
+
+4. node.js
+```bash
+npm run start
+```
+
+### Documentation
+1. API documentation
+> localhost:3000/swagger
+
+### development tools
+> vscode, docker, pgadmin, postman
+
 ### 這個資料夾的樹狀結構
 ```
 ├── node_modules        npm install 載好的 library 在這裡面
@@ -26,8 +79,9 @@ npm install
 
 使用以下指令，把 MongoDB 給起起來
 ```bash
-docker compose up -d
+docker compose --env-file ./config/.env.development up -d
 ## 可以使用 docker compose down 關閉
+docker compose --env-file ./config/.env.development down
 ```
 
 接下來使用以下指令把後端給起起來

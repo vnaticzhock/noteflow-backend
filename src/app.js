@@ -1,44 +1,53 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import Koa from 'koa';
 import { koaBody } from 'koa-body';
-import session from 'koa-session';
-import * as dotenv from 'dotenv';
 
-import WebSocket from 'ws';
+import logger from 'koa-logger';
 import http from 'http';
+import { WebSocketServer } from 'ws';
+
+import cors from 'kcors';
 import WebSocketJSONStream from '@teamwork/websocket-json-stream';
 
-import sharedb from './sharedb.js';
-import router from './router.js';
+import koaServe from 'koa-serve';
 
-dotenv.config();
+import sharedb from './database/sharedb.js';
+import routes from './routes/index.js';
+import error from './middleware/error-middleware.js';
+import redisSession from './database/redis-session.js';
 
 const app = new Koa();
 
-app.keys = ['session secret...'];
-const SESSION_CONFIG = {
-  key: 'koa.sess',
-  maxAge: 86400000,
-  autoCommit: true,
-  overwrite: true,
-  httpOnly: true,
-  signed: true,
-  rolling: true,
-  renew: true,
-};
-app.use(session(SESSION_CONFIG, app));
+app.use(logger());
+app.use(
+  cors({
+    origin: '*',
+    exposeHeaders: ['Authorization'],
+    credentials: true,
+    allowMethods: ['GET', 'PUT', 'POST', 'DELETE'],
+    allowHeaders: ['Authorization', 'Content-Type'],
+    keepHeadersOnError: true,
+  }),
+);
 
+app.keys = ['session secret...'];
+
+app.use(redisSession(app));
+app.use(error);
 app.use(koaBody());
-app.use(router.routes());
+app.use(routes.allowedMethods());
+app.use(routes.routes());
+
+app.use(koaServe({ rootPath: '/', rootDir: 'build' }));
 
 const server = http.createServer(app);
-const webSocketServer = new WebSocket.Server({ server });
+const ws = new WebSocketServer({ server });
 
-webSocketServer.on('connection', (webSocket) => {
+ws.on('connection', (webSocket) => {
   const stream = new WebSocketJSONStream(webSocket);
   sharedb.listen(stream);
 });
 
-app.listen(7000);
+server.listen(3000);
 
 export default app;
