@@ -19,26 +19,32 @@ export default {
     if (!user) {
       ctx.throw(400, "Bad request. You didn't provide user column.");
     }
-
     const userSelected = await db('users').first().where({ email: user.email });
+    // return;
 
     if (userSelected) {
       // 可以登入
-      user = generateJWTforUser(user);
+      user = generateJWTforUser(userSelected);
       ctx.status = 200;
       ctx.body = JSON.stringify({ user: _.omit(user, ['password']) });
       return;
     }
 
     // 要註冊
-    user.id = uuidv4();
-    user.password = await argon2.hash('123');
+    user.uuid = uuidv4();
+    user.password = await argon2.hash('google-login-no-password');
 
-    await db('users').insert(humps.decamelizeKeys(user));
+    await db('users').insert(
+      humps.decamelizeKeys({
+        uuid: user.id,
+        password: user.password,
+        name: `${user.name} ${user.family_name}`,
+      }),
+    );
 
-    user = generateJWTforUser(user);
+    user = generateJWTforUser(userSelected);
 
-    ctx.body = { user: _.omit(user, ['password']) };
+    ctx.body = JSON.stringify({ user: _.omit(user, ['password']) });
     ctx.status = 200;
   },
   async register(ctx) {
@@ -47,11 +53,13 @@ export default {
     if (!user) {
       ctx.throw(400, "Bad request. You didn't provide user column.");
     }
+    if (!user.email || !user.name || !user.password) {
+      ctx.throw(400, "Bad request. You didn't provide sufficient information.");
+    }
 
-    user.id = uuidv4();
-
-    const opts = { abortEarly: false, context: { validatePassword: true } };
-    user = await ctx.app.schemas.user.validate(user, opts);
+    user.uuid = uuidv4();
+    // const opts = { abortEarly: false, context: { validatePassword: true } };
+    // user = await ctx.app.schemas.user.validate(user, opts);
 
     user.password = await argon2.hash(user.password);
 

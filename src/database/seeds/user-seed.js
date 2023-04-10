@@ -1,12 +1,13 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import argon2 from 'argon2';
 import shajs from 'sha.js';
+import { v4 as uuidv4 } from 'uuid';
 
 const PrepareData = async () => [
   {
     name: 'admin',
     email: 'admin@gmail.com',
-    id: '1',
+    uuid: uuidv4(),
     password: await argon2.hash(shajs('sha256').update('112a').digest('hex')),
   },
 ];
@@ -16,6 +17,7 @@ export async function getUsers() {
 
   return users.map((u) => ({
     id: u.id,
+    uuid: u.uuid,
     email: u.email || `${u.name}@demo.com`,
     name: u.name,
     password: u.password,
