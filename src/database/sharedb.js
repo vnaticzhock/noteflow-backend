@@ -14,38 +14,38 @@ dotenv.config({ path: `${process.cwd()}/config/.env.development` });
 const { REDIS_ACCOUNT, REDIS_PASSWORD, REDIS_HOST, REDIS_PORT } = process.env;
 
 const redisClient = new Redis({
-  host: REDIS_HOST,
-  port: REDIS_PORT,
-  password: REDIS_PASSWORD,
-  username: REDIS_ACCOUNT,
-  // enableReadyCheck: false,
+    host: REDIS_HOST,
+    port: REDIS_PORT,
+    password: REDIS_PASSWORD,
+    username: REDIS_ACCOUNT,
+    // enableReadyCheck: false,
 });
 
 const redisObserver = new Redis({
-  host: REDIS_HOST,
-  port: REDIS_PORT,
-  password: REDIS_PASSWORD,
-  username: REDIS_ACCOUNT,
-  // enableReadyCheck: false,
+    host: REDIS_HOST,
+    port: REDIS_PORT,
+    password: REDIS_PASSWORD,
+    username: REDIS_ACCOUNT,
+    // enableReadyCheck: false,
 });
 
 // initialize mongodb client
 const {
-  MONGO_INITDB_ROOT_USERNAME,
-  MONGO_INITDB_ROOT_PASSWORD,
-  MONGO_HOST,
-  MONGO_PORT,
+    MONGO_INITDB_ROOT_USERNAME,
+    MONGO_INITDB_ROOT_PASSWORD,
+    MONGO_HOST,
+    MONGO_PORT,
 } = process.env;
 const mongoClient = new MongoClient(
-  `mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}`,
+    `mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}`
 );
 
 ShareDB.types.register(richText); // allow sharedb to colab with rich text format
 const sharedb = new ShareDB({
-  presence: true,
-  doNotForwardSendPresenceErrorsToClient: true,
-  pubsub: RedisPubSub({ client: redisClient, observer: redisObserver }),
-  db: mongoClient,
+    presence: true,
+    doNotForwardSendPresenceErrorsToClient: true,
+    pubsub: RedisPubSub({ client: redisClient, observer: redisObserver }),
+    db: mongoClient,
 });
 
 export default sharedb;

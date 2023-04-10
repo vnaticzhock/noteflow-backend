@@ -1,6 +1,3 @@
-
-const getDOc = async () => {
-
-}
+const getDOc = async () => {};
 
 export default getDOc;

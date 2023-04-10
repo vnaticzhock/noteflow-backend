@@ -6,8 +6,8 @@ import getDoc from './getDoc.js';
 import getLibrary from './getLibrary.js';
 
 const router = new Router()
-.get('/get-flows', getFlows)
-.get('/get-Doc', getDoc)
-.get('/get-Library', getLibrary)
+    .get('/get-flows', getFlows)
+    .get('/get-Doc', getDoc)
+    .get('/get-Library', getLibrary);
 
 export default router;

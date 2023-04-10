@@ -7,9 +7,9 @@ const router = new Router();
 const api = new Router().use(users);
 
 router.get('/hello-world', async (ctx) => {
-  ctx.body = 'hello world!';
-  ctx.status = 200;
-  console.log(ctx);
+    ctx.body = 'hello world!';
+    ctx.status = 200;
+    console.log(ctx);
 });
 router.use('/swagger', swagger);
 router.use('/api', api.routes());

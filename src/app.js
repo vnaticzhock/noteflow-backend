@@ -20,14 +20,14 @@ const app = new Koa();
 
 app.use(logger());
 app.use(
-  cors({
-    origin: '*',
-    exposeHeaders: ['Authorization'],
-    credentials: true,
-    allowMethods: ['GET', 'PUT', 'POST', 'DELETE'],
-    allowHeaders: ['Authorization', 'Content-Type'],
-    keepHeadersOnError: true,
-  }),
+    cors({
+        origin: '*',
+        exposeHeaders: ['Authorization'],
+        credentials: true,
+        allowMethods: ['GET', 'PUT', 'POST', 'DELETE'],
+        allowHeaders: ['Authorization', 'Content-Type'],
+        keepHeadersOnError: true,
+    })
 );
 
 app.use(redisSession(app));
@@ -43,8 +43,8 @@ const server = http.createServer(app.callback());
 const ws = new WebSocketServer({ server });
 
 ws.on('connection', (webSocket) => {
-  const stream = new WebSocketJSONStream(webSocket);
-  sharedb.listen(stream);
+    const stream = new WebSocketJSONStream(webSocket);
+    sharedb.listen(stream);
 });
 
 server.listen(3000);
