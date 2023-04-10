@@ -6,7 +6,7 @@ import logger from 'koa-logger';
 import http from 'http';
 import { WebSocketServer } from 'ws';
 
-import cors from 'kcors';
+import cors from '@koa/cors';
 import WebSocketJSONStream from '@teamwork/websocket-json-stream';
 
 import koaServe from 'koa-serve';
@@ -30,17 +30,16 @@ app.use(
   }),
 );
 
-app.keys = ['session secret...'];
-
 app.use(redisSession(app));
-app.use(error);
+// app.use(error);
+
 app.use(koaBody());
 app.use(routes.allowedMethods());
 app.use(routes.routes());
 
 app.use(koaServe({ rootPath: '/', rootDir: 'build' }));
 
-const server = http.createServer(app);
+const server = http.createServer(app.callback());
 const ws = new WebSocketServer({ server });
 
 ws.on('connection', (webSocket) => {
@@ -50,4 +49,4 @@ ws.on('connection', (webSocket) => {
 
 server.listen(3000);
 
-export default app;
+export default server;

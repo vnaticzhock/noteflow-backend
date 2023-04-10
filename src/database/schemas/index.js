@@ -1,7 +1,8 @@
 const user = require('./user-schema');
 
-export default function (app) {
-    app.schemas = {
-      user
-    };
-}
+export default (app) => {
+  // eslint-disable-next-line no-param-reassign
+  app.schemas = {
+    user,
+  };
+};

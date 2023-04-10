@@ -1,7 +1,8 @@
 import * as dotenv from 'dotenv';
 import Pg from 'pg';
 
-dotenv.config({path: "config/.env.development"});
+
+dotenv.config({ path: 'config/.env.development' });
 
 const {
   POSTGRES_HOST,

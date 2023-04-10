@@ -24,4 +24,3 @@ const userSchema = yup
   .concat(timeStampSchema);
 
 export default userSchema;
-
