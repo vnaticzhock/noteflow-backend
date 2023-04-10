@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv';
 import Pg from 'pg';
 
-dotenv.config();
+dotenv.config({ path: 'config/.env.development' });
 
 const {
   POSTGRES_HOST,
@@ -13,7 +13,7 @@ const {
   // MONGO_INITDB_ROOT_PASSWORD
 } = process.env;
 
-const postgre = new Pg.Pool({
+const postgres = new Pg.Pool({
   user: POSTGRES_USER,
   host: POSTGRES_HOST,
   database: POSTGRES_DB,
@@ -21,4 +21,4 @@ const postgre = new Pg.Pool({
   port: Number(POSTGRES_PORT),
 });
 
-export default postgre;
+export default postgres;
