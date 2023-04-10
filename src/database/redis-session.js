@@ -14,8 +14,8 @@ const redisSession = (app) => {
   const redisClient = new Redis({
     host: REDIS_HOST,
     port: REDIS_SESSION_PORT,
-    password: REDIS_PASSWORD,
-    username: REDIS_ACCOUNT,
+    // password: REDIS_PASSWORD,
+    // username: REDIS_ACCOUNT,
   });
 
   const SESSION_CONFIG = {

@@ -16,16 +16,16 @@ const { REDIS_ACCOUNT, REDIS_PASSWORD, REDIS_HOST, REDIS_PORT } = process.env;
 const redisClient = new Redis({
   host: REDIS_HOST,
   port: REDIS_PORT,
-  password: REDIS_PASSWORD,
-  username: REDIS_ACCOUNT,
+  // password: REDIS_PASSWORD,
+  // username: REDIS_ACCOUNT,
   // enableReadyCheck: false,
 });
 
 const redisObserver = new Redis({
   host: REDIS_HOST,
   port: REDIS_PORT,
-  password: REDIS_PASSWORD,
-  username: REDIS_ACCOUNT,
+  // password: REDIS_PASSWORD,
+  // username: REDIS_ACCOUNT,
   // enableReadyCheck: false,
 });
 

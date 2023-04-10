@@ -6,22 +6,8 @@ const users = [
   {
     name: 'admin',
     email: 'admin@gmail.com',
+    password: bcrypt.hashSync('112a', 10),
     id: '1',
-  },
-  {
-    name: 'demo',
-    email: 'demo@gmail.com',
-    id: '2',
-  },
-  {
-    name: 'jack',
-    email: 'jack@gmail.com',
-    id: '3',
-  },
-  {
-    name: 'johnjacob',
-    email: 'john@gmail.com',
-    id: '4',
   },
 ];
 
@@ -30,7 +16,7 @@ export function getUsers() {
     id: u.id,
     email: u.email || `${u.name}@demo.com`,
     name: u.name,
-    password: bcrypt.hashSync('X12345678', 10),
+    password: u.password,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   }));
