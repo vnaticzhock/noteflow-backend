@@ -13,7 +13,6 @@ import koaServe from 'koa-serve';
 
 import sharedb from './database/sharedb.js';
 import routes from './routes/index.js';
-import error from './middleware/error-middleware.js';
 import redisSession from './database/redis-session.js';
 
 const app = new Koa();

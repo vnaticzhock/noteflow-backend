@@ -9,7 +9,7 @@ const api = new Router().use(users);
 router.get('/hello-world', async (ctx) => {
   ctx.body = 'hello world!';
   ctx.status = 200;
-  await ctx.session.save();
+  ctx.session.save();
 });
 router.use('/swagger', swagger);
 router.use('/api', api.routes());

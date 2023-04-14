@@ -18,9 +18,11 @@
   "author": "sdm-group-6",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.312.0",
     "@koa/cors": "^4.0.0",
     "@teamwork/websocket-json-stream": "^2.0.0",
     "argon2": "^0.30.3",
+    "aws-sdk": "^2.1359.0",
     "bcrypt": "^5.1.0",
     "config": "^3.3.9",
     "dotenv": "^16.0.3",
