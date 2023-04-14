@@ -1,14 +1,19 @@
 import Router from 'koa-router';
 // import ctrl from '../controllers';
-import userController from '../controller/user-controller.js';
+import { user, service } from '../controller/index.js';
 import { auth } from '../middleware/auth-required-middleware.js';
 
 const router = new Router();
-router.post('/user/login', userController.login);
-router.post('/user/logout', userController.logout);
-router.post('/user/register', userController.register);
+router
+  .post('/user/login', user.login)
+  .post('/user/logout', user.logout)
+  .post('/user/register', user.register)
 
-router.get('/user', auth, userController.getUserToken);
-router.put('/user', auth, userController.updateUserInfo);
+  .get('/get-flows', service.getFlows)
+  .get('/get-flow', service.getFlow)
+  .get('/get-library', service.getLibrary)
+
+  .get('/user', auth, user.getUserToken)
+  .put('/user', auth, user.updateUserInfo);
 
 export default router.routes();

@@ -38,6 +38,7 @@ const {
 } = process.env;
 const mongoClient = new MongoClient(
   `mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}`,
+  { useUnifiedTopology: true, maxPoolSize: 10 },
 );
 
 ShareDB.types.register(richText); // allow sharedb to colab with rich text format

@@ -1,5 +1,4 @@
-const users = require('./user-controller');
+import user from './userServices/index.js';
+import service from './flowServices/index.js';
 
-export default {
-  users,
-};
+export { user, service };

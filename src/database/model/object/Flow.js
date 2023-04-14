@@ -1,5 +1,5 @@
 class Flow {
-  constructor(flowId, flowName, owner, nodes, edges, thumbnail) {
+  constructor(flowId, flowName, owner, nodes = [], edges = []) {
     // if(content instanceof ...) throw NotContentError...;
     Object.defineProperties(this, 'id', {
       value: flowId,
@@ -12,11 +12,11 @@ class Flow {
     this.owner = owner;
     this.nodes = nodes;
     this.edges = edges;
-    this.thumbnail = thumbnail;
-  }
 
-  // addNode() {}
-  // deleteNode() {}
+    if (!this.flowName || !this.flowName === '') {
+      this.flowName = 'Untitled';
+    }
+  }
 }
 
 export default Flow;

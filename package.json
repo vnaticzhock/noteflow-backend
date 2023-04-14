@@ -12,7 +12,8 @@
     "lint": "eslint",
     "db:migrate": "knex --knexfile src/database/knexfile.js migrate:latest",
     "db:seed": "knex --knexfile src/database/knexfile.js seed:run",
-    "db:rollback": "knex --knexfile src/database/knexfile.js migrate:rollback"
+    "db:rollback": "knex --knexfile src/database/knexfile.js migrate:rollback",
+    "mongo:seed": "node src/database/seeds/node-repo.js"
   },
   "author": "sdm-group-6",
   "license": "ISC",
