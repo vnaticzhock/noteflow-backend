@@ -31,18 +31,18 @@ app.use(koaBody());
 app.use(koaServe({ rootPath: '/', rootDir: 'build' }));
 app.use(logger());
 
-//middleware
-app.use(error); //error handling
+// middleware
+app.use(error); // error handling
 // app.use(schemas);                   //schema handling
 
-//router
+// router
 app.use(routes.allowedMethods());
 app.use(routes.routes());
 
-//redis
+// redis
 app.use(redisSession(app));
 
-//websocket
+// websocket
 const ws = new WebSocketServer({ server });
 ws.on('connection', (webSocket) => {
     const stream = new WebSocketJSONStream(webSocket);

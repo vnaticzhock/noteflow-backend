@@ -10,7 +10,7 @@
         "test": "set NODE_ENV=test && jest --detectOpenHandles",
         "test:coverage": "set NODE_ENV=test && jest --coverage --detectOpenHandles",
         "format": "prettier --config .prettierrc \"**/*.+(js|json)\" --write",
-        "lint": "eslint *.js test/*.js --fix",
+        "lint": "eslint src/**/*.js --fix && eslint tests/**/*.js --fix",
         "db:migrate": "knex --knexfile src/database/knexfile.js migrate:latest",
         "db:seed": "knex --knexfile src/database/knexfile.js seed:run",
         "db:rollback": "knex --knexfile src/database/knexfile.js migrate:rollback"

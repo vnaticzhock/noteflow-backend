@@ -1,6 +1,6 @@
 import yup from 'yup';
-import timeStampSchema from './time-stamp-schema.js';
 import validator from 'validator';
+import timeStampSchema from './time-stamp-schema.js';
 
 const userSchema = yup
     .object()
