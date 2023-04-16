@@ -37,6 +37,16 @@ services:
       POSTGRES_USER: $POSTGRES_USER
       POSTGRES_PASSWORD: $POSTGRES_PASSWORD
 
+  redis:
+    image: "noteflow-redis-ws"
+    ports:
+      - $REDIS_PORT:$REDIS_PORT
+
+  redis-session:
+    image: "noteflow-redis-session"
+    ports:
+      - $REDIS_SESSION_PORT:$REDIS_SESSION_PORT
+
 volumes:
   data:
   mongodb_data:
