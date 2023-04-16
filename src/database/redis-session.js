@@ -15,8 +15,8 @@ const redisSession = (app) => {
     app.keys = ['session secret...'];
 
     const redisClient = new Redis({
-        // host: REDIS_HOST,
-        // port: REDIS_SESSION_PORT,
+        host: REDIS_HOST,
+        port: REDIS_SESSION_PORT,
         password: REDIS_PASSWORD,
         username: REDIS_ACCOUNT,
     });

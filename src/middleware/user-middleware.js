@@ -1,5 +1,5 @@
-const { has } = require('lodash');
-const db = require('../lib/db');
+import has from 'lodash/has';
+import db from '../lib/db.js';
 
 export default async (ctx, next) => {
     if (has(ctx, 'state.jwt.sub.id')) {

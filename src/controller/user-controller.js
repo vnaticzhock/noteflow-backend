@@ -8,122 +8,125 @@ import db from '../lib/db.js';
 import { generateJWTforUser } from '../lib/utils.js';
 
 export default {
-  async getUserToken(ctx) {
-    const user = generateJWTforUser(ctx.state.user);
+    async getUserToken(ctx) {
+        const user = generateJWTforUser(ctx.state.user);
 
-    ctx.body = { user };
-  },
-  async google_login(ctx) {
-    let { user } = ctx.request.body;
+        ctx.body = { user };
+    },
+    async google_login(ctx) {
+        let { user } = ctx.request.body;
 
-    if (!user) {
-      ctx.throw(400, "Bad request. You didn't provide user column.");
-    }
+        if (!user) {
+            ctx.throw(400, "Bad request. You didn't provide user column.");
+        }
 
-    const userSelected = await db('users').first().where({ email: user.email });
+        const userSelected = await db('users')
+            .first()
+            .where({ email: user.email });
 
-    if (userSelected) {
-      // 可以登入
-      user = generateJWTforUser(user);
-      ctx.status = 200;
-      ctx.body = JSON.stringify({ user: _.omit(user, ['password']) });
-      return;
-    }
+        if (userSelected) {
+            // 可以登入
+            user = generateJWTforUser(user);
+            ctx.status = 200;
+            ctx.body = JSON.stringify({ user: _.omit(user, ['password']) });
+            return;
+        }
 
-    // 要註冊
-    user.id = uuidv4();
-    user.password = await argon2.hash('123');
+        // 要註冊
+        user.id = uuidv4();
+        user.password = await argon2.hash('123');
 
-    await db('users').insert(humps.decamelizeKeys(user));
+        await db('users').insert(humps.decamelizeKeys(user));
 
-    user = generateJWTforUser(user);
+        user = generateJWTforUser(user);
 
-    ctx.body = { user: _.omit(user, ['password']) };
-    ctx.status = 200;
-  },
-  async register(ctx) {
-    let { user } = ctx.request.body; // if none, assign user with {}
+        ctx.body = { user: _.omit(user, ['password']) };
+        ctx.status = 200;
+    },
+    async register(ctx) {
+        let { user } = ctx.request.body; // if none, assign user with {}
 
-    if (!user) {
-      ctx.throw(400, "Bad request. You didn't provide user column.");
-    }
+        if (!user) {
+            ctx.throw(400, "Bad request. You didn't provide user column.");
+        }
 
-    user.id = uuidv4();
+        user.id = uuidv4();
 
-    const opts = { abortEarly: false, context: { validatePassword: true } };
-    user = await ctx.app.schemas.user.validate(user, opts);
 
-    user.password = await argon2.hash(user.password);
+        const opts = { abortEarly: false, context: { validatePassword: true } };
+        user = await ctx.app.schemas.user.validate(user, opts);
 
-    await db('users').insert(humps.decamelizeKeys(user));
+        user.password = await argon2.hash(user.password);
 
-    user = generateJWTforUser(user);
+        await db('users').insert(humps.decamelizeKeys(user));
 
-    ctx.status = 200;
-    ctx.body = { user: _.omit(user, ['password']) };
-  },
+        user = generateJWTforUser(user);
 
-  async updateUserInfo(ctx) {
-    const { body } = ctx.request;
-    const { user: fields = {} } = body;
-    const opts = { abortEarly: false, context: { validatePassword: false } };
+        ctx.status = 200;
+        ctx.body = { user: _.omit(user, ['password']) };
+    },
 
-    if (fields.password) {
-      opts.context.validatePassword = true;
-    }
+    async updateUserInfo(ctx) {
+        const { body } = ctx.request;
+        const { user: fields = {} } = body;
+        const opts = {
+            abortEarly: false,
+            context: { validatePassword: false },
+        };
 
-    let user = { ...ctx.state.user, ...fields };
-    user = await ctx.app.schemas.user.validate(user, opts);
+        if (fields.password) {
+            opts.context.validatePassword = true;
+        }
 
-    if (fields.password) {
-      user.password = await argon2.hash(user.password);
-    }
+        let user = { ...ctx.state.user, ...fields };
+        user = await ctx.app.schemas.user.validate(user, opts);
 
-    user.updatedAt = new Date().toISOString();
+        if (fields.password) {
+            user.password = await argon2.hash(user.password);
+        }
 
-    await db('users').where({ id: user.id }).update(humps.decamelizeKeys(user));
+        user.updatedAt = new Date().toISOString();
 
-    user = generateJWTforUser(user);
+        await db('users')
+            .where({ id: user.id })
+            .update(humps.decamelizeKeys(user));
 
-    ctx.body = { user: _.omit(user, ['password']) };
-    ctx.status = 200;
-  },
+        user = generateJWTforUser(user);
 
-  async login(ctx) {
-    const { body } = ctx.request;
-    ctx.assert(
-      _.isObject(body.user) && body.user.email && body.user.password,
-      422,
-      new ValidationError(['malformed request'], '', 'email or password'),
-    );
+        ctx.body = { user: _.omit(user, ['password']) };
+        ctx.status = 200;
+    },
 
-    let user = await db('users').first().where({ email: body.user.email });
-    ctx.assert(
-      user,
-      401,
-      new ValidationError(['is invalid'], '', 'email or password'),
-    );
+    async login(ctx) {
+        const { body } = ctx.request;
 
-    const isValid = await argon2.verify(user.password, body.user.password);
+        ctx.assert(
+            _.isObject(body.user) && body.user.email && body.user.password,
+            422,
+            new ValidationError(['malformed request'], '', 'email or password')
+        );
 
-    ctx.assert(
-      isValid,
-      401,
-      new ValidationError(['is invalid'], '', 'email or password'),
-    );
+        let user = await db('users').first().where({ email: body.user.email });
+        const isValid = await argon2.verify(user.password, body.user.password);
 
-    user = generateJWTforUser(user); // 裡面加入 token
+        ctx.assert(
+            isValid,
+            401,
+            new ValidationError(['is invalid'], '', 'email or password')
+        );
 
-    ctx.status = 200;
-    ctx.body = JSON.stringify({ user: _.omit(user, ['password']) }); // 把 password 給挑掉
+        user = generateJWTforUser(user); // 裡面加入 token
 
-    ctx.session = {
-      logined: true,
-      ..._.omit(user, ['id', 'created_at', 'updated_at']),
-    };
-  },
+        ctx.status = 200;
+        ctx.body = JSON.stringify({ user: _.omit(user, ['password']) }); // 把 password 給挑掉
 
-  async logout(ctx) {
-    // todo
-  },
+        ctx.session = {
+            logined: true,
+            ..._.omit(user, ['id', 'created_at', 'updated_at']),
+        };
+    },
+
+    async logout(ctx) {
+        // todo
+    },
 };

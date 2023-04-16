@@ -1,5 +1,5 @@
 import yup from 'yup';
-import isISO8601 from 'validator/lib/isISO8601';
+import validator from 'validator';
 
 const timeStampsSchema = yup
     .object()
@@ -11,7 +11,9 @@ const timeStampsSchema = yup
                 name: 'createdAt',
                 message: '${path} must be valid ISO8601 date', // eslint-disable-line
                 test: (value) =>
-                    value ? isISO8601(new Date(value).toISOString()) : true,
+                    value
+                        ? validator.isISO8601(new Date(value).toISOString())
+                        : true,
             })
             .transform(function (value) {
                 return this.isType(value) && value !== null
@@ -27,7 +29,9 @@ const timeStampsSchema = yup
                 name: 'updatedAt',
                 message: '${path} must be valid ISO8601 date', // eslint-disable-line
                 test: (value) =>
-                    value ? isISO8601(new Date(value).toISOString()) : true,
+                    value
+                        ? validator.isISO8601(new Date(value).toISOString())
+                        : true,
             })
             .transform(function (value) {
                 return this.isType(value) && value !== null
@@ -38,4 +42,4 @@ const timeStampsSchema = yup
     })
     .noUnknown();
 
-module.exports = timeStampsSchema;
+export default timeStampsSchema;
