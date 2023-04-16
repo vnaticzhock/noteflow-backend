@@ -29,16 +29,18 @@
     ./redis/run_redis_local.sh
     ```
 2. database
+    - database migrate
     ```bash
-    # migrate
     npm run db:migrate
-
-    # seed
-    npm run db:seed
-
-    # rollback
-    npm run db:rollback
     ```
+    - database seed
+        ```bash
+        npm run db:seed
+        ```
+    - database rollback
+        ```bash
+        npm run db:rollback
+        ```
 3. node.js
     ```bash
     npm run start
@@ -49,6 +51,16 @@
     # 可以使用 docker compose down 關閉
     docker compose --env-file ./config/.env.development down
     ```
+5. test
+    - 跑單元測試
+        ```bash
+        npm run test
+        ```
+    - 跑 code code coverage
+        ```bash
+        npm run test:coverage
+        ```
+
 ## environment
 ### local, development
 1. host
