@@ -11,6 +11,14 @@ const PrepareData = async () => [
             shajs('sha256').update('112a').digest('hex')
         ),
     },
+    {
+        name: 'test',
+        email: 'test@gmail.com',
+        id: '2',
+        password: await argon2.hash(
+            shajs('sha256').update('test').digest('hex')
+        ),
+    },
 ];
 
 export async function getUsers() {
