@@ -15,6 +15,7 @@ import sharedb from './database/sharedb.js';
 import routes from './routes/index.js';
 import error from './middleware/error-middleware.js';
 import redisSession from './database/redis-session.js';
+// import useSchema from './database/schemas/index.js'
 
 const app = new Koa();
 
@@ -31,7 +32,7 @@ app.use(
 );
 
 app.use(redisSession(app));
-// app.use(error);
+// app.use(useSchema(app));
 
 app.use(koaBody());
 app.use(routes.allowedMethods());

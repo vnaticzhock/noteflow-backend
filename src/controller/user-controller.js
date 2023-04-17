@@ -24,9 +24,12 @@ export default {
 
     if (userSelected) {
       // 可以登入
-      user = generateJWTforUser(userSelected);
       ctx.status = 200;
       ctx.body = JSON.stringify({ user: _.omit(user, ['password']) });
+
+      ctx.logined = true;
+      ctx.email = user.email;
+      await ctx.session.save();
       return;
     }
 
@@ -42,11 +45,14 @@ export default {
       }),
     );
 
-    user = generateJWTforUser(userSelected);
-
     ctx.body = JSON.stringify({ user: _.omit(user, ['password']) });
     ctx.status = 200;
+
+    ctx.logined = true;
+    ctx.email = user.email;
+    await ctx.session.save();
   },
+
   async register(ctx) {
     let { user } = ctx.request.body; // if none, assign user with {}
 
@@ -125,10 +131,9 @@ export default {
     ctx.status = 200;
     ctx.body = JSON.stringify({ user: _.omit(user, ['password']) }); // 把 password 給挑掉
 
-    ctx.session = {
-      logined: true,
-      ..._.omit(user, ['id', 'created_at', 'updated_at']),
-    };
+    ctx.logined = true;
+    ctx.email = user.email;
+    await ctx.session.save();
   },
 
   async logout(ctx) {
