@@ -17,30 +17,26 @@ class Flows {
   }
 
   async fetchFlows() {
-    try {
-      await mongoClient.connect();
-      const database = mongoClient.db('noteflow');
-      const collection = database.collection('flowPreviews');
+    await mongoClient.connect();
+    const database = mongoClient.db('noteflow');
+    const collection = database.collection('flowPreviews');
 
-      const cursor = collection.find(
-        {
-          owner: this.user,
-          // TODO: 新增共編時, shared collaborator 也要加入查找
-        },
-        {},
-      );
-      const documents = await cursor.toArray();
+    const cursor = collection.find(
+      {
+        owner: this.user,
+        // TODO: 新增共編時, shared collaborator 也要加入查找
+      },
+      {},
+    );
+    const documents = await cursor.toArray();
 
-      documents.forEach((element, index) => {
-        const { flowId, flowName, owner, thumbnail } = element;
-        documents[index] = FlowPreview(flowId, flowName, owner, thumbnail);
-      });
-      this.flowPreviews = documents;
-    } catch (err) {
-      console.log(err);
-    } finally {
-      await mongoClient.close();
-    }
+    documents.forEach((element, index) => {
+      const { flowId, flowName, owner, thumbnail } = element;
+      documents[index] = FlowPreview(flowId, flowName, owner, thumbnail);
+    });
+    this.flowPreviews = documents;
+
+    await mongoClient.close();
   }
 
   static async fetchFlow(flowId) {

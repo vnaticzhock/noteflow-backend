@@ -12,15 +12,36 @@ import richText from 'rich-text';
 let { NOTEFLOW_HOST = '140.112.107.71', NOTEFLOW_PORT = '3000' } = process.env;
 
 sharedb.types.register(richText.type);
-Quill.register('modules/cursors', QuillCursors);
 
 const QuillContext = createContext({
   OpenEditor: () => {},
   setIdentity: () => {},
 });
-const collection = 'doc-collection';
+
+/**
+ * Quill 介面，可以自行修改裡面的元素
+ */
+Quill.register('modules/cursors', QuillCursors);
+const quillInterface = new Quill('#editor', {
+  theme: 'bubble',
+  modules: { cursors: true },
+});
+
+const collection = 'editors';
+
+/**
+ * 亂數產生的 hashId, 這個 id 可以再綁定一個名字，
+ * 可以使用 setIdentity({..., name: ...}) 來綁定名字。
+ */
 const presenceId = new ObjectID().toHexString(); // TODO
 
+/**
+ * 自動為不同人的 Cursors 產生不同顏色並渲染
+ * {
+ *  hashId1: '#......',
+ *  hashId2: '#......',
+ * }
+ */
 const colors = {};
 
 const QuillProvider = (props) => {
@@ -28,6 +49,7 @@ const QuillProvider = (props) => {
   const [quill, setQuill] = useState(null);
   const [editorId, setEditorId] = useState(null);
   const [editor, setEditor] = useState(null);
+  const [presence, setPresence] = useState(null);
 
   const [identity, setIdentity] = useState(null);
 
@@ -40,18 +62,20 @@ const QuillProvider = (props) => {
     setWebsocket(connection);
   }, []);
 
-  const OpenEditor = (editorId) => {
+  const OpenEditor = async (editorId) => {
     if (!document.getElementById('editor')) {
       throw Error('#editor not found !');
     }
     // TODO: 確認有沒有這個 collection & table 存在 mongodb 裡面
+    if (editor) {
+      // 如果先前有訂閱其他的 Node，取消訂閱，清除 eventListener
+      await editor.unsubscribe();
+    }
+    if (presence) {
+      await presence.unsubscribe();
+    }
     setEditorId(editorId);
-    setQuill(
-      new Quill('#editor', {
-        theme: 'bubble',
-        modules: { cursors: true },
-      }),
-    );
+    setQuill(quillInterface);
   };
 
   useEffect(() => {
@@ -62,22 +86,29 @@ const QuillProvider = (props) => {
     editor.subscribe((error) => {
       if (error) return console.error(error);
 
+      // 設定特定 node editor 的 websocket
       setEditor(editor);
 
       quill.setContents(editor.data);
+
+      // 如果你改變文字
       quill.on('text-change', (delta, oldDelta, source) => {
-        if (source !== 'user') return;
+        if (source !== 'user') return; // ?
         editor.submitOp(delta);
       });
+
+      // 如果你收到從別的地方來的訊息
       editor.on('op', function (op, source) {
         if (source) return;
         quill.updateContents(op);
       });
 
+      // 進入
       const presence = editor.connection.getDocPresence(collection, editorId);
       presence.subscribe((error) => {
         if (error) throw error;
       });
+      setPresence(presence);
 
       const localPresence = presence.create(presenceId);
 

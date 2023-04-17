@@ -28,7 +28,6 @@ class NodeRef {
     this.style = style;
     // 或者使用解構賦值傳遞值
     // const myInstance = new MyClass(...Object.values(myObject));
-    this.node = null;
   }
 
   changeProperty(key, value) {
