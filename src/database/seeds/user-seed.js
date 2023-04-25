@@ -7,13 +7,8 @@ const PrepareData = async () => [
   {
     name: 'admin',
     email: 'admin@gmail.com',
-<<<<<<< HEAD
-    password: bcrypt.hashSync('112a', 10),
-    id: '1',
-=======
     uuid: uuidv4(),
     password: await argon2.hash(shajs('sha256').update('112a').digest('hex')),
->>>>>>> 85da37b792ad7d34414038b9368c09ed0bc41b74
   },
 ];
 

@@ -6,10 +6,15 @@ import swagger from './swagger-routes.js';
 const router = new Router();
 const api = new Router().use(users);
 
-router.get('/hello-world', async (ctx) => {
+router.get('/api/hello-world', async (ctx) => {
+  // console.log(ctx.session);
+  ctx.session.hello = 'hi';
+  await ctx.session.save(); 
+
   ctx.body = 'hello world!';
   ctx.status = 200;
-  await ctx.session.save();
+  // console.log(ctx);
+  
 });
 router.use('/swagger', swagger);
 router.use('/api', api.routes());

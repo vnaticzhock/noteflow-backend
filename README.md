@@ -1,12 +1,14 @@
 # noteflow-backend
 
+note-flow.24h.name
+
 ```bash
 ## docker 版的 redis 常常會有連線不順的問題，所以在 docker compose 完後，需要運行另一個腳本：
 ## 1. 先將一般的資料庫起起來
-docker compose --env-file ./config/.env.development up -d   
+docker-compose --env-file ./config/.env.development up -d   
 ## 2. 運行 local 的 redis-server，如果沒有 redis-server 可以 brew install redis  
 chmod 777 ./redis/run_redis_local.sh
-./redis/run_redis_local.sh  
+./redis/run_redis_local.sh
 ```
 
 ## 常用port(localhost)
@@ -34,9 +36,9 @@ npm run db:rollback
 
 3. docker
 ```bash
-docker compose --env-file ./config/.env.development up -d
+docker-compose --env-file ./config/.env.development up -d
 ## 可以使用 docker compose down 關閉
-docker compose --env-file ./config/.env.development down
+docker-compose --env-file ./config/.env.development down
 ```
 
 4. node.js

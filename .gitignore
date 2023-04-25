@@ -8,3 +8,4 @@ yarn.lock
 **/*/.DS_Store
 
 redis/redis.conf
+config/.env.development
