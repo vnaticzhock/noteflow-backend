@@ -1,6 +1,6 @@
-import yup from 'yup';
-import validator from 'validator';
-import timeStampSchema from './time-stamp-schema.js';
+// const yup = require('yup');
+// const timeStampSchema = require('./time-stamp-schema');
+// const isUUID = require('validator/lib/isUUID');
 
 const userSchema = yup
     .object()

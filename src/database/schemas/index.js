@@ -1,8 +1,13 @@
-import userSchema from './user-schema.js';
+// const user = require('./user-schema');
+import user from './user-schema.js';
 
-export default (ctx, next) => {
-    ctx.app.schemas = {
-        userSchema,
-    };
-    return next();
+const useSchema = (app, next) => {
+  // eslint-disable-next-line no-param-reassign
+  app.schemas = {
+    user,
+  };
+  next();
 };
+
+
+export default useSchema;
