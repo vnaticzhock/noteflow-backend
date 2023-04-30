@@ -5,18 +5,16 @@ import logger from 'koa-logger';
 import { WebSocketServer } from 'ws';
 import http from 'http';
 import koaSslify from 'koa-sslify'
-
 import cors from '@koa/cors';
 import WebSocketJSONStream from '@teamwork/websocket-json-stream';
 import koaServe from 'koa-serve';
-import sharedb from './database/sharedb.js';
+import sharedb from './database/mongodb/sharedb.js';
 import routes from './routes/index.js';
 import error from './middleware/error-middleware.js';
-// import schemas from './database/schemas/index.js';
-import redisSession, { getSession } from './database/redis-session.js';
+import redisSession, { getSession } from './database/redis/redisSession.js';
 
 const app = new Koa();
-const server = http.createServer(app.callback());
+// const server = http.createServer(app.callback());
 
 // const {default: sslify} = koaSslify;
 // app.use(sslify())

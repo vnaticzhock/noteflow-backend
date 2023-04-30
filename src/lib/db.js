@@ -2,7 +2,7 @@
 /* eslint-disable import/no-mutable-exports */
 import dotenv from 'dotenv';
 import knex from 'knex';
-import knexfile from '../database/knexfile.js';
+import knexfile from '../database/postgres/knexfile.js';
 
 let db;
 dotenv.config({ path: '/config/.env' });
