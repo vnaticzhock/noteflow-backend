@@ -8,6 +8,7 @@ export function up(knex, Promise) {
     table.timestamp('created_at').defaultTo(knex.fn.now());
     table.timestamp('updated_at').defaultTo(knex.fn.now());
     table.string('jwt');
+    table.boolean('verified').defaultTo(false);
   });
 }
 

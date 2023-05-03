@@ -4,9 +4,11 @@ import logout from './logout.js';
 import register from './register.js';
 import updateUserInfo from './updateUserInfo.js';
 import whoAmI from './whoAmI.js';
+import verifyToken from './verifyToken.js';
 
 const service = {
   googleLogin,
+  verifyToken,
   login,
   logout,
   register,

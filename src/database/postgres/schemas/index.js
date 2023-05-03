@@ -1,13 +1,9 @@
-// const user = require('./user-schema');
-import user from './user-schema.js';
+import userSchema from './userSchema.js';
+import tokenSchema from './tokenSchema.js';
 
-const useSchema = (app, next) => {
-  // eslint-disable-next-line no-param-reassign
-  app.schemas = {
-    user,
-  };
-  next();
+const schema = {
+    userSchema,
+    tokenSchema,
 };
 
-
-export default useSchema;
+export { userSchema, tokenSchema };

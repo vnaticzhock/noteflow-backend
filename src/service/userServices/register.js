@@ -5,89 +5,46 @@ import _ from 'lodash';
 import argon2 from 'argon2';
 import db from '../../lib/db.js';
 import { createUserBucket } from '../../database/mongodb/model/index.js';
-import nodemailer from 'nodemailer';
-import google from 'googleapis';
-
-const createTransporter = async () => {
-  const oauth2Client = new google.Auth.OAuth2(
-    process.env.CLIENT_ID,
-    process.env.CLIENT_SECRET,
-    "https://developers.google.com/oauthplayground"
-  );
-
-  oauth2Client.setCredentials({
-    refresh_token: process.env.REFRESH_TOKEN
-  });
-
-  const accessToken = await new Promise((resolve, reject) => {
-    oauth2Client.getAccessToken((err, token) => {
-      if (err) {
-        reject();
-      }
-      resolve(token);
-    });
-  });
-
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      type: "OAuth2",
-      user: process.env.EMAIL,
-      accessToken,
-      clientId: process.env.CLIENT_ID,
-      clientSecret: process.env.CLIENT_SECRET,
-      refreshToken: process.env.REFRESH_TOKEN
-    }
-  });
-
-  return transporter;
-};
+import sendEmail from '../../lib/email.js';
+import { userSchema, tokenSchema } from '../../database/postgres/schemas/index.js';
 
 const register = async (ctx) => {
-  const { user } = ctx.request.body; // if none, assign user with {}
+    try {
+        const { user } = ctx.request.body; // if none, assign user with {}
 
-  if (!user) {
-    ctx.throw(400, "Bad request. You didn't provide user column.");
-  }
-  if (!user.email || !user.name || !user.password) {
-    ctx.throw(400, "Bad request. You didn't provide sufficient information.");
-  }
+        const { error } = validate(user);
+        if (error) return res.status(400).send(error.details[0].message);
 
-  //email verification
-  // const sendEmail = async (emailOptions) => {
-  //   let emailTransporter = await createTransporter();
-  //   await emailTransporter.sendMail(emailOptions);
-  // };
+        // if (!user) {
+        //   ctx.throw(400, "Bad request. You didn't provide user column.");
+        // }
+        // if (!user.email || !user.name || !user.password) {
+        //   ctx.throw(400, "Bad request. You didn't provide sufficient information.");
+        // }
 
-  // sendEmail({
-  //   subject: "[SDM email verify]",
-  //   text: "email verify",
-  //   to: user.email,
-  //   from: process.env.EMAIL
-  // });
+        // create User
+        const result = await db('users').first().where({ email: user.email });
+        if (result) {
+            ctx.throw(401, 'Forbidden, you already have  an email.');
+        }
 
-  // console.log("Message sent: %s", info.messageId);
-  // console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+        user = await new userSchema({
+            name: req.body.name,
+            email: req.body.email,
+        }).save();
 
-  const result = await db('users').first().where({ email: user.email });
-  if(result) {
-    ctx.throw(401, "Forbidden, you already have  an email.");
-  }
+        let token = await new Token({
+            userId: user._id,
+            token: crypto.randomBytes(32).toString('hex'),
+        }).save();
 
-  user.uuid = uuidv4();
-  user.password = await argon2.hash(user.password);
+        const message = `${process.env.BASE_URL}/user/verify/${user.id}/${token.token}`;
+        await sendEmail(user.email, 'Verify Email', message);
 
-  await db('users').insert(humps.decamelizeKeys(user));
-
-  ctx.session.logined = true;
-  ctx.session.email = user.email;
-  ctx.session.name = user.name;
-  ctx.session.picture = user.picture;
-  await ctx.session.save();
-  await createUserBucket(user.email);
-
-  ctx.status = 200;
-  ctx.body = { user: _.omit(user, ['password']) };
+        res.send('An Email sent to your account please verify');
+    } catch (error) {
+        ctx.throw(400, 'An error occurred');
+    }
 };
 
 export default register;

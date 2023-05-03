@@ -3,19 +3,9 @@
 import { MongoClient } from 'mongodb';
 import dotenv from 'dotenv';
 import { v4 as uuidv4 } from 'uuid';
+import mongoClient from '../mongoClient.js';
 
 dotenv.config({ path: `${process.cwd()}/config/.env.development` });
-
-const {
-  MONGO_INITDB_ROOT_USERNAME,
-  MONGO_INITDB_ROOT_PASSWORD,
-  MONGO_HOST,
-  MONGO_PORT,
-} = process.env;
-
-const mongoClient = new MongoClient(
-  `mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}`,
-);
 
 const owner = 'admin@gmail.com';
 const nodeId = {
@@ -29,7 +19,7 @@ const nodeRepoData = [
   { // 這是一個文件
     user: owner,
     nodes: [
-      { 
+      {
         nodeId: nodeId.n1,
         type: 'CustomNode',
         editor: {
