@@ -32,8 +32,6 @@ const redisObserver = new Redis({
 
 // initialize mongodb client
 const {
-    MONGO_INITDB_ROOT_USERNAME,
-    MONGO_INITDB_ROOT_PASSWORD,
     MONGO_NOTEFLOW_USERNAME,
     MONGO_NOTEFLOW_PASSWORD,
     MONGO_HOST,
