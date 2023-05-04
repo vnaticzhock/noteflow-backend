@@ -6,10 +6,18 @@ import sharedb, { getMongoClient } from '../../sharedb.js';
 import FlowPreview from './FlowList.js';
 import FlowList from './FlowList.js';
 import _ from 'lodash';
-import json1 from 'ot-json1'
+import json1 from 'ot-json1';
 
 class Flow {
-  constructor(flowId, flowName, owner, thumbnail = "", nodes = [], edges = []) {
+  constructor(
+    flowId,
+    flowName,
+    owner,
+    colaborators = null,
+    thumbnail = '',
+    nodes = [],
+    edges = []
+  ) {
     // if(content instanceof ...) throw NotContentError...;
     this.id = flowId;
     if (!Array.isArray(nodes) || !Array.isArray(edges)) {
@@ -20,7 +28,9 @@ class Flow {
     this.owner = owner;
     this.nodes = nodes;
     this.edges = edges;
-    this.colaborators = Array.isArray(colaborators) ? colaborators : [this.owner]
+    this.colaborators = Array.isArray(colaborators)
+      ? colaborators
+      : [this.owner];
 
     if (!this.name || !this.name === '') {
       this.name = 'Untitled';
@@ -35,11 +45,20 @@ class Flow {
     const database = mongoClient.db('noteflow');
     const collection = database.collection('flows');
 
-    const result = await collection.findOneAndUpdate({
-      user: this.owner,
-    }, {
-      $addToSet: { "flows": _.omit({...this, updateAt: Date.now()}, ['owner', 'edges', 'nodes'])}
-    })
+    const result = await collection.findOneAndUpdate(
+      {
+        user: this.owner,
+      },
+      {
+        $addToSet: {
+          flows: _.omit({ ...this, updateAt: Date.now() }, [
+            'owner',
+            'edges',
+            'nodes',
+          ]),
+        },
+      }
+    );
     await mongoClient.close();
     const flowList = new FlowList(this.owner);
     await flowList.addSomebodyToFlowList(this.owner, this.id);
@@ -47,49 +66,46 @@ class Flow {
   }
 
   async newify_sharedb() {
-    const connection = sharedb.connect()
+    const connection = sharedb.connect();
     const doc = connection.get('flow-sharedb', this.id);
     doc.fetch((err) => {
       if (err) throw err;
       if (doc.type === null) {
-        doc.create({nodes: {}, edges: {}, name: "Undefined"}, json1.type.uri)
+        doc.create({ nodes: {}, edges: {}, name: 'Undefined' }, json1.type.uri);
       }
     });
   }
 
-
   static async CanUserEdit(flowId, owner, target) {
-    const mongoClient = getMongoClient()
+    const mongoClient = getMongoClient();
     await mongoClient.connect();
     const database = mongoClient.db('noteflow');
     const collection = database.collection('flows');
-
-    const resolved = await collection.aggregate([
-      {$match: {user: owner}},
-      {$limit: 1},
-      {$unwind: "$flows"},
-      {$match: {'flows.id': flowId}}
-    ]).toArray()
-
+    const resolved = await collection
+      .aggregate([
+        { $match: { user: owner } },
+        { $limit: 1 },
+        { $unwind: '$flows' },
+        { $match: { 'flows.id': flowId } },
+      ])
+      .toArray();
     await mongoClient.close();
-
-    return target in resolved[0].colaborators;
+    return resolved[0].flows.colaborators.includes(target);
   }
 
   static async generateFlowId(owner) {
-    
     let resolved = false;
     let newUuid;
     while (!resolved) {
       newUuid = `${owner}-flow-${uuidv4()}`;
-      const mongoClient = getMongoClient()
+      const mongoClient = getMongoClient();
       await mongoClient.connect();
       const database = mongoClient.db('noteflow');
       const collection = database.collection('flows');
 
       const result = await collection.findOne({
         user: owner,
-        flows: { $elemMatch: { flowId: newUuid }}
+        flows: { $elemMatch: { flowId: newUuid } },
       });
       if (!result) {
         resolved = true;
@@ -102,133 +118,132 @@ class Flow {
 
 export default Flow;
 
+// async storeFlow() {
+//   const mongoClient = getMongoClient()
+//   await mongoClient.connect();
+//   const database = mongoClient.db('noteflow');
+//   const collection = database.collection('flows');
 
-  // async storeFlow() {
-  //   const mongoClient = getMongoClient()
-  //   await mongoClient.connect();
-  //   const database = mongoClient.db('noteflow');
-  //   const collection = database.collection('flows');
+//   await collection.findOneAndUpdate(
+//     {
+//       user: this.user,
+//     },
+//     {
+//       $set: { "flows.$": {...this, updateAt: Date.now()}},
+//       $addToSet: {
+//         flows: {
+//           ...this,
+//           updateAt: Date.now(),
+//         }
+//       }
+//     }
+//   );
 
-  //   await collection.findOneAndUpdate(
-  //     {
-  //       user: this.user,
-  //     },
-  //     {
-  //       $set: { "flows.$": {...this, updateAt: Date.now()}},
-  //       $addToSet: {
-  //         flows: {
-  //           ...this,
-  //           updateAt: Date.now(),
-  //         }
-  //       }
-  //     }
-  //   );
+//   const flowPrev = new FlowPreview(this.flowId, this.flowName, this.owner);
+//   flowPrev.storeFlow();
+// }
 
-  //   const flowPrev = new FlowPreview(this.flowId, this.flowName, this.owner);
-  //   flowPrev.storeFlow();
-  // }
+// static async addComponent(flowId, owner, type, component) {
+//   const mongoClient = getMongoClient()
+//   await mongoClient.connect();
+//   const database = mongoClient.db('noteflow');
+//   const collection = database.collection('flows');
 
-  // static async addComponent(flowId, owner, type, component) {
-  //   const mongoClient = getMongoClient()
-  //   await mongoClient.connect();
-  //   const database = mongoClient.db('noteflow');
-  //   const collection = database.collection('flows');
+//   const result = await collection.findOneAndUpdate(
+//     {
+//       user: owner,
+//       "flows.flowId": flowId,
+//     },
+//     {
+//       $addToSet: {
+//         [`flows.$.${type}`]: {
+//           ...component,
+//           updateAt: Date.now()
+//         }
+//       }
+//     },
+//     {
+//       returnDocument: true,
+//     }
+//   )
 
-  //   const result = await collection.findOneAndUpdate(
-  //     {
-  //       user: owner,
-  //       "flows.flowId": flowId,
-  //     },
-  //     {
-  //       $addToSet: {
-  //         [`flows.$.${type}`]: {
-  //           ...component,
-  //           updateAt: Date.now()
-  //         }
-  //       }
-  //     },
-  //     {
-  //       returnDocument: true,
-  //     }
-  //   )
+//   if(!result) {
+//     throw Error('Flow not found');
+//   }
+// }
 
-  //   if(!result) {
-  //     throw Error('Flow not found');
-  //   }
-  // }
+// static async removeComponent(flowId, owner, type, component) {
+//   const mongoClient = getMongoClient()
+//   await mongoClient.connect();
+//   const database = mongoClient.db('noteflow');
+//   const collection = database.collection('flows');
 
-  // static async removeComponent(flowId, owner, type, component) {
-  //   const mongoClient = getMongoClient()
-  //   await mongoClient.connect();
-  //   const database = mongoClient.db('noteflow');
-  //   const collection = database.collection('flows');
+//   const result = await collection.findOneAndDelete(
+//     {
+//       user: owner,
+//       "flows.flowId": flowId,
+//     },
+//     {
+//       $pull: {
+//         [`flows.$.${type}`]: {
+//           id: { $eq: component.id }
+//         }
+//       }
+//     },
+//     {
+//       returnDocument: true,
+//     }
+//   )
 
-  //   const result = await collection.findOneAndDelete(
-  //     {
-  //       user: owner,
-  //       "flows.flowId": flowId,
-  //     },
-  //     {
-  //       $pull: {
-  //         [`flows.$.${type}`]: {
-  //           id: { $eq: component.id }
-  //         }
-  //       }
-  //     },
-  //     {
-  //       returnDocument: true,
-  //     }
-  //   )
+//   if(!result) {
+//     throw Error('Flow not found');
+//   }
+// }
 
-  //   if(!result) {
-  //     throw Error('Flow not found');
-  //   }
-  // }
+// static async alterComponent(flowId, owner, type, component) {
+//   const mongoClient = getMongoClient()
+//   await mongoClient.connect();
+//   const database = mongoClient.db('noteflow');
+//   const collection = database.collection('flows');
 
-  // static async alterComponent(flowId, owner, type, component) {
-  //   const mongoClient = getMongoClient()
-  //   await mongoClient.connect();
-  //   const database = mongoClient.db('noteflow');
-  //   const collection = database.collection('flows');
+//   const changed = type === 'title' ? component : {
+//     ...component,
+//     updateAt: Date.now()
+//   };
 
-  //   const changed = type === 'title' ? component : {
-  //     ...component,
-  //     updateAt: Date.now()
-  //   };
+//   const result = await collection.findOneAndUpdate(
+//     {
+//       user: owner,
+//       "flows.flowId": flowId,
+//     },
+//     {
+//       $set: {
+//         [`flows.$.${type}`]: changed
+//       }
+//     },
+//     {
+//       returnDocument: true,
+//     }
+//   )
 
-  //   const result = await collection.findOneAndUpdate(
-  //     {
-  //       user: owner,
-  //       "flows.flowId": flowId,
-  //     },
-  //     {
-  //       $set: {
-  //         [`flows.$.${type}`]: changed 
-  //       }
-  //     },
-  //     {
-  //       returnDocument: true,
-  //     }
-  //   )
+//   if(!result) {
+//     throw Error('Flow not found');
+//   }
+// }
+// static async fetchFlow(userId, flowId) {
+//   const mongoClient = getMongoClient()
+//   await mongoClient.connect();
+//   const database = mongoClient.db('noteflow');
+//   const collection = database.collection('flows');
 
-  //   if(!result) {
-  //     throw Error('Flow not found');
-  //   }
-  // }
-  // static async fetchFlow(userId, flowId) {
-  //   const mongoClient = getMongoClient()
-  //   await mongoClient.connect();
-  //   const database = mongoClient.db('noteflow');
-  //   const collection = database.collection('flows');
+//   const resolved = await collection.aggregate([
+//     {$match: {user: userId}},
+//     {$limit: 1},
+//     {$unwind: "$flows"},
+//     {$match:{'flows.id': flowId}},
+//   ]).toArray()
 
-  //   const resolved = await collection.aggregate([
-  //     {$match: {user: userId}},
-  //     {$limit: 1},
-  //     {$unwind: "$flows"},
-  //     {$match:{'flows.id': flowId}},
-  //   ]).toArray()
+//   await mongoClient.close();
 
-  //   await mongoClient.close();
-
-  //   return resolved[0];
-  // }
+//   return resolved[0];
+// }

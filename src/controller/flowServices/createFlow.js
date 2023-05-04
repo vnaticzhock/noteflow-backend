@@ -6,13 +6,19 @@ const createFlow = async (ctx) => {
   }
 
   const owner = ctx.session.email;
-  const flowId = await Flow.generateFlowId(owner);
-  const flow = new Flow(flowId, '', owner);
+  
+  try {
+    const flowId = await Flow.generateFlowId(owner);
+    const flow = new Flow(flowId, '', owner);
+    await flow.newify();
+    ctx.body = flowId;
+    ctx.status = 200;
+  } catch (err) {
+    // 在 Model 階段出現任何錯誤
+    ctx.throw(404, JSON.stringify(err))
+  }
 
-  await flow.newify();
-
-  ctx.body = flowId;
-  ctx.status = 200;
+  
 };
 
 export default createFlow;

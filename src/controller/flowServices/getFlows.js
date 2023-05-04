@@ -8,18 +8,16 @@ const getFlows = async (ctx) => {
   
   // 拿取你帳號裡面的所有 Flows
   const flows = new FlowList(ctx.session.email);
-  // try {
+  try {
     await flows.fetchFlowList();
-    console.log('half')
     const result = await Flows.fetchFlowsByFlowList(flows.flowList);
 
     ctx.status = 200;
     ctx.body = JSON.stringify(result);
-  // } catch (err) {
+  } catch (err) {
     // 在 Model 階段出現任何錯誤
-    // ctx.throw(404, JSON.stringify(err))
-  // }
-
+    ctx.throw(404, JSON.stringify(err))
+  }
 };
 
 export default getFlows;

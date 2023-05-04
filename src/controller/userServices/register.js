@@ -26,10 +26,12 @@ const register = async (ctx) => {
 
   await db('users').insert(humps.decamelizeKeys(user));
 
-  ctx.session.logined = true;
-  ctx.session.email = user.email;
-  ctx.session.name = user.name;
-  ctx.session.picture = user.picture;
+  ctx.session = {
+    logined: true,
+    email: user.email,
+    name: user.name,
+    picture: user.picture ? user.picture : null
+  }
   await ctx.session.save();
   await createUserBucket(user.email);
 

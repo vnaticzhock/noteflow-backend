@@ -1,48 +1,51 @@
-import sharedb from "../../sharedb.js";
-import { getMongoClient } from "../../sharedb.js";
+import sharedb from '../../sharedb.js';
+import { getMongoClient } from '../../sharedb.js';
 
 class Node {
   constructor(id, type, owner, colaborators) {
     this.id = id;
-    this.name = "Untitled";
+    this.name = 'Untitled';
     this.type = type;
     this.owner = owner;
-    this.colaborators = Array.isArray(colaborators) ? colaborators : [this.owner]
+    this.colaborators = Array.isArray(colaborators)
+      ? colaborators
+      : [this.owner];
     this.updateTime = Date.now();
   }
 
   validate() {
-    return (!this.id || !this.type || !this.owner || !this.colaborators)
+    return !this.id || !this.type || !this.owner || !this.colaborators;
   }
 
   addEditor() {
     const connection = sharedb.connect();
     const doc = connection.get('editor', this.id);
     doc.fetch((err) => {
-      if(err) throw err;
-      if(doc.type === null) {
-        doc.create([{insert: ""}], 'rich-text');
+      if (err) throw err;
+      if (doc.type === null) {
+        doc.create([{ insert: '' }], 'rich-text');
       }
-      console.log('node added!', doc.data)
-    })
+      console.log('node added!', doc.data);
+    });
   }
 
   static async CanUserEdit(nodeId, owner, target) {
-    const mongoClient = getMongoClient()
+    const mongoClient = getMongoClient();
     await mongoClient.connect();
     const database = mongoClient.db('noteflow');
-    const collection = database.collection('nodeRepo');
+    const collection = database.collection('nodeRepository');
 
-    const resolved = await collection.aggregate([
-      {$match: {user: owner}},
-      {$limit: 1},
-      {$unwind: "$nodes"},
-      {$match: {'nodes.id': nodeId}}
-    ]).toArray()
+    const resolved = await collection
+      .aggregate([
+        { $match: { user: owner } },
+        { $limit: 1 },
+        { $unwind: '$nodes' },
+        { $match: { 'nodes.id': nodeId } },
+      ])
+      .toArray();
 
     await mongoClient.close();
-
-    return target in resolved[0].colaborators;
+    return resolved[0].nodes.colaborators.includes(target);
   }
 
   async editTitle(newTitle) {
@@ -53,7 +56,7 @@ class Node {
 
     const result = await collection.findOne({
       user: this.user,
-      nodes: { $elemMatch: { nodeId: newUuid }}
+      nodes: { $elemMatch: { nodeId: newUuid } },
     });
     if (!result) {
       resolved = true;

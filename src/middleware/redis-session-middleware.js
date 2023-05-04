@@ -54,12 +54,12 @@ function parseCookies(cookieString) {
 }
 
 async function getSession(cookieString) {
-  const cookies = parseCookies(cookieString)
-  const key = cookies['koa.sess']
-  const mapper = await redisClient.get(key)
+  const cookies = parseCookies(cookieString);
+  const key = cookies['koa.sess'];
+  const mapper = JSON.parse(await redisClient.get(key));
 
-  if(mapper['_expire'] > Date.now()) {
-    return null;
+  if (mapper['_expire'] < Date.now()) {
+    return {};
   }
 
   return mapper;

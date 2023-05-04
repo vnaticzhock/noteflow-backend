@@ -1,6 +1,6 @@
 /* eslint-disable no-lonely-if */
 import { getMongoClient } from '../../sharedb.js';
-import shajs from 'sha.js'
+import shajs from 'sha.js';
 
 class FlowList {
   constructor(user) {
@@ -11,14 +11,14 @@ class FlowList {
   static async genFlowListProfile(userEmail) {
     const result = {
       user: userEmail,
-      flowList: []
-    }
+      flowList: [],
+    };
 
     const mongoClient = getMongoClient();
     await mongoClient.connect();
     const database = mongoClient.db('noteflow');
     const collection = database.collection('flowList');
-    if(await collection.findOne({user: result.user})) {
+    if (await collection.findOne({ user: result.user })) {
       return; // We have created for this user.
     }
     await collection.insertOne(result);
@@ -32,9 +32,11 @@ class FlowList {
     const database = mongoClient.db('noteflow');
     const collection = database.collection('flowList');
 
-    this.flowList= (await collection.findOne({
-                      user: this.user,
-                    })).flowList;
+    this.flowList = (
+      await collection.findOne({
+        user: this.user,
+      })
+    ).flowList;
 
     await mongoClient.close();
   }
@@ -44,13 +46,14 @@ class FlowList {
     await mongoClient.connect();
     const database = mongoClient.db('noteflow');
     const collection = database.collection('flowList');
-    await collection.findOneAndUpdate({
-      user: userEmail,
-    }, {
-      $addToSet: { "flowList": 
-        {owner: userEmail, flowId}
+    await collection.findOneAndUpdate(
+      {
+        user: userEmail,
       },
-    });
+      {
+        $addToSet: { flowList: { owner: userEmail, flowId } },
+      }
+    );
 
     await mongoClient.close();
   }
@@ -61,11 +64,14 @@ class FlowList {
     const database = mongoClient.db('noteflow');
     const collection = database.collection('flowList');
 
-    await collection.findOneAndUpdate({
-      user: userEmail,
-    }, {
-      $pull: {[`flowList.${this.user}`]: flowId},
-    });
+    await collection.findOneAndUpdate(
+      {
+        user: userEmail,
+      },
+      {
+        $pull: { [`flowList.${this.user}`]: flowId },
+      }
+    );
 
     await mongoClient.close();
   }

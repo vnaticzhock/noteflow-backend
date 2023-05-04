@@ -41,8 +41,6 @@ const {
   MONGO_PORT,
 } = process.env;
 
-console.log(MONGO_NOTEFLOW_USERNAME, MONGO_NOTEFLOW_PASSWORD)
-
 const getMongoClient = () => {
   return new MongoClient(
     `mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}`,
