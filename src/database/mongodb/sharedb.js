@@ -2,16 +2,43 @@
 import ShareDB from 'sharedb';
 import richText from 'rich-text';
 import sharedb_mongo from 'sharedb-mongo';
+
 import RedisPubSub from 'sharedb-redis-pubsub';
+import Redis from 'ioredis';
 import * as dotenv from 'dotenv';
-import redisClient from '../redis/redisClient.js';
-import redisObserver from '../redis/redisObserver.js';
 import json1 from 'ot-json1';
 
 dotenv.config({ path: `${process.cwd()}/config/.env.development` });
 
-const { MONGO_USERNAME, MONGO_PASSWORD, MONGO_EXPRESS_HOST, MONGO_PORT } =
-    process.env;
+// initialize redis client
+// eslint-disable-next-line object-curly-newline
+const { REDIS_ACCOUNT, REDIS_PASSWORD, REDIS_HOST, REDIS_PORT } = process.env;
+
+const redisClient = new Redis({
+    host: REDIS_HOST,
+    port: REDIS_PORT,
+    // password: REDIS_PASSWORD,
+    // username: REDIS_ACCOUNT,
+    // enableReadyCheck: false,
+});
+
+const redisObserver = new Redis({
+    host: REDIS_HOST,
+    port: REDIS_PORT,
+    // password: REDIS_PASSWORD,
+    // username: REDIS_ACCOUNT,
+    // enableReadyCheck: false,
+});
+
+// initialize mongodb client
+const {
+    MONGO_INITDB_ROOT_USERNAME,
+    MONGO_INITDB_ROOT_PASSWORD,
+    MONGO_NOTEFLOW_USERNAME,
+    MONGO_NOTEFLOW_PASSWORD,
+    MONGO_HOST,
+    MONGO_PORT,
+} = process.env;
 
 ShareDB.types.register(json1.type);
 ShareDB.types.register(richText.type); // allow sharedb to colab with rich text format
@@ -20,9 +47,10 @@ const sharedb = new ShareDB({
     doNotForwardSendPresenceErrorsToClient: true,
     pubsub: RedisPubSub({ client: redisClient, observer: redisObserver }),
     db: sharedb_mongo(
-        `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_EXPRESS_HOST}:${MONGO_PORT}/noteflow`,
+        `mongodb://${MONGO_NOTEFLOW_USERNAME}:${MONGO_NOTEFLOW_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/noteflow`,
         { useUnifiedTopology: true, maxPoolSize: 10, useNewUrlParser: true }
     ),
 });
 
 export default sharedb;
+export { redisClient };
