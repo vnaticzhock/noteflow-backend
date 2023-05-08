@@ -11,7 +11,7 @@ import json1 from 'ot-json1';
 
 dotenv.config({ path: `${process.cwd()}/config/.env.development` });
 
-const { MONGO_USERNAME, MONGO_PASSWORD, MONGO_EXPRESS_HOST, MONGO_PORT } = process.env;
+const { MONGO_USERNAME, MONGO_PASSWORD, MONGO_EXPRESS_HOST, MONGO_PORT, MONGO_DB } = process.env;
 
 ShareDB.types.register(json1.type);
 ShareDB.types.register(richText.type); // allow sharedb to colab with rich text format
@@ -20,7 +20,7 @@ const sharedb = new ShareDB({
     doNotForwardSendPresenceErrorsToClient: true,
     pubsub: RedisPubSub({ client: redisClient, observer: redisObserver }),
     db: sharedb_mongo(
-        `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_EXPRESS_HOST}:${MONGO_PORT}/noteflow`,
+        `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_EXPRESS_HOST}:${MONGO_PORT}/${MONGO_DB}`,
         { useUnifiedTopology: true, maxPoolSize: 10, useNewUrlParser: true }
     ),
 });
