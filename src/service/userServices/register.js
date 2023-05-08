@@ -63,7 +63,7 @@ const register = async (ctx) => {
         sendEmail({
             subject: '【noteflow】 Verify Email',
             text: message,
-            to: 'pocper1@yahoo.com.tw',
+            to: user.email,
             from: EMAIL_USER,
             html: HTML_TEMPLATE(message),
         });
