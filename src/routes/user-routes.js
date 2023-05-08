@@ -10,7 +10,7 @@ router
   .get('/use/verify/:id/:token', user.verifyToken)
   .post('/user/google-login', user.googleLogin)
   .get('/user/who-am-i', user.whoAmI)
-  .put('/user/update', auth, user.updateUserInfo)
+  .post('/user/update', auth, user.updateUserInfo)
 
   .get('/flows/', flow.getFlows)
   .post('/flows/create', flow.createFlow)
