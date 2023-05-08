@@ -1,4 +1,6 @@
 const logout = async (ctx) => {
+  console.log(ctx);
+  
   ctx.session = null;
   await ctx.session.save();
   ctx.status = 200;

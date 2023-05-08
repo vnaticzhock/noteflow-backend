@@ -5,9 +5,11 @@ export function up(knex, Promise) {
     table.string('email');
     table.string('name');
     table.string('password');
+    table.string('picture');
     table.timestamp('created_at').defaultTo(knex.fn.now());
     table.timestamp('updated_at').defaultTo(knex.fn.now());
     table.string('jwt');
+    table.string('token');
     table.boolean('verified').defaultTo(false);
   });
 }

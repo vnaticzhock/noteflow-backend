@@ -2,7 +2,7 @@ import path from 'path';
 import * as dotenv from 'dotenv';
 
 const BASE_PATH = `${process.cwd()}`;
-dotenv.config({ path: `${BASE_PATH}/../../config/.env.development` });
+dotenv.config({ path: `${BASE_PATH}/../../../config/.env.development` });
 
 const {
     POSTGRES_HOST,
@@ -17,30 +17,30 @@ export default {
         client: 'pg',
         connection: `postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}`,
         migrations: {
-            directory: path.join(BASE_PATH, 'postgres', 'migrations'),
+            directory: path.join(BASE_PATH, 'migrations'),
         },
         seeds: {
-            directory: path.join(BASE_PATH, 'postgres', 'seeds'),
+            directory: path.join(BASE_PATH, 'seeds'),
         },
     },
     development: {
         client: 'pg',
         connection: `postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}`,
         migrations: {
-            directory: path.join(BASE_PATH, 'postgres', 'migrations'),
+            directory: path.join(BASE_PATH, 'migrations'),
         },
         seeds: {
-            directory: path.join(BASE_PATH, 'postgres', 'seeds'),
+            directory: path.join(BASE_PATH, 'seeds'),
         },
     },
     production: {
         client: 'pg',
         connection: `postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}`,
         migrations: {
-            directory: path.join(BASE_PATH, 'postgres', 'migrations'),
+            directory: path.join(BASE_PATH, 'migrations'),
         },
         seeds: {
-            directory: path.join(BASE_PATH, 'postgres', 'seeds'),
+            directory: path.join(BASE_PATH, 'seeds'),
         },
     },
 };

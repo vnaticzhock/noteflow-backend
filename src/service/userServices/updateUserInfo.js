@@ -3,31 +3,41 @@ import humps from 'humps';
 import _ from 'lodash';
 import argon2 from 'argon2';
 import db from '../../lib/db.js';
+import { userSchema } from '../../database/postgres/schemas/index.js';
 
 const updateUserInfo = async (ctx) => {
-  const { body } = ctx.request;
-  const { user: fields = {} } = body;
-  const opts = { abortEarly: false, context: { validatePassword: false } };
+    const { body } = ctx.request;
+    const { user: fields = {} } = body;
+    const opts = { abortEarly: false, context: { validatePassword: false } };
 
-  if (fields.password) {
-    opts.context.validatePassword = true;
-  }
+    try {
+        if (fields.password) {
+            opts.context.validatePassword = true;
+        }
 
-  let user = { ...ctx.state.user, ...fields };
-  user = await ctx.app.schemas.user.validate(user, opts);
+        let user = { ...ctx.state.user, ...fields };
 
-  if (fields.password) {
-    user.password = await argon2.hash(user.password);
-  }
+        user = await userSchema.validate(user, opts);
 
-  user.updatedAt = new Date().toISOString();
+        if (fields.password) {
+            user.password = await argon2.hash(user.password);
+        }
 
-  await db('users').where({ id: user.id }).update(humps.decamelizeKeys(user));
+        user.updatedAt = new Date().toISOString();
 
-  ctx.logined = true;
-  ctx.session.account = user.email;
-  ctx.body = { user: _.omit(user, ['password']) };
-  ctx.status = 200;
+        await db('users')
+            .where('email', user.email)
+            .update({ name: user.name });
+
+        ctx.logined = true;
+        ctx.session.account = user.email;
+        ctx.body = { user: _.omit(user, ['password']) };
+        ctx.status = 200;
+    } catch (err) {
+        ctx.throw(400, err.message);
+        ctx.status = err.status || 500;
+        ctx.body = JSON.parse({ errors: err.message });
+    }
 };
 
 export default updateUserInfo;

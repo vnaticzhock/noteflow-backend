@@ -3,23 +3,42 @@ import humps from 'humps';
 import _ from 'lodash';
 import argon2 from 'argon2';
 import db from '../../lib/db.js';
+import { createUserBucket } from '../../database/mongodb/model/index.js';
 
 const verifyToken = async (ctx) => {
+    try {
+        var userId = ctx.params.id;
+        var token = ctx.params.token;
 
-  // user.uuid = uuidv4();
-    // user.password = await argon2.hash(user.password);
+        const user = await db('users').first().where({ id: userId });
 
-    // await db('users').insert(humps.decamelizeKeys(user));
+        if (String(user.token).valueOf() == String(token).valueOf()) {
+            await db('users')
+                .where({ id: userId })
+                .update({
+                    verified: true,
+                })
+                .returning('*')
+                .then((rows) => {
+                    console.log('User verified successfully.');
+                });
 
-    // ctx.session.logined = true;
-    // ctx.session.email = user.email;
-    // ctx.session.name = user.name;
-    // ctx.session.picture = user.picture;
-    // await ctx.session.save();
-    // await createUserBucket(user.email);
+            ctx.session.logined = true;
+            ctx.session.email = user.email;
+            ctx.session.name = user.name;
+            ctx.session.picture = user.picture;
+            await ctx.session.save();
+            // await createUserBucket(user.email);
 
-    // ctx.status = 200;
-    // ctx.body = { user: _.omit(user, ['password']) };
+            const newUser = await db('users').first().where({ id: userId });
+            ctx.status = 200;
+            ctx.body = { user: _.omit(newUser, ['password']) };
+        }
+    } catch (err) {
+        ctx.status = err.status || 500;
+        ctx.body = JSON.stringify({ errors: err.message });
+        ctx.throw(`${err.status}, Bad request. ${err.message}`);
+    }
 };
 
 export default verifyToken;

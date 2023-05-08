@@ -7,7 +7,7 @@ router
   .post('/user/login', user.login)
   .post('/user/logout', user.logout)
   .post('/user/register', user.register)
-  .get('/use/verify/:id/:token', user.verifyToken)
+  .get('/user/verify/:id/:token', user.verifyToken)
   .post('/user/google-login', user.googleLogin)
   .get('/user/who-am-i', user.whoAmI)
   .post('/user/update', auth, user.updateUserInfo)

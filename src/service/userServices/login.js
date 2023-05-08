@@ -5,36 +5,47 @@ import { ValidationError } from 'yup';
 import db from '../../lib/db.js';
 
 const login = async (ctx) => {
-  const { user } = ctx.request.body;
-  ctx.assert(
-    _.isObject(user) && user.email && user.password,
-    422,
-    new ValidationError(['malformed request'], '', 'email or password'),
-  );
+    try {
+        const { user } = ctx.request.body;
 
-  const result = await db('users').first().where({ email: user.email });
-  ctx.assert(
-    result,
-    401,
-    new ValidationError(['is invalid'], '', 'email or password'),
-  );
+        ctx.assert(
+            _.isObject(user) && user.email && user.password,
+            422,
+            JSON.stringify({ errors: 'email or password input error' })
+        );
 
-  ctx.assert(
-    await argon2.verify(result.password, user.password),
-    401,
-    new ValidationError(['is invalid'], '', 'email or password'),
-  );
-  
-  user.name = result.name;
+        const result = await db('users').first().where({ email: user.email });
+        ctx.assert(result, 401, JSON.stringify({ errors: 'email is invalid' }));
 
-  ctx.session.logined = true;
-  ctx.session.email = user.email;
-  ctx.session.name = user.name;
-  ctx.session.picture = user.picture;
-  await ctx.session.save(); 
+        console.log(result.password);
+        console.log(user.password);
+        var validate = await argon2.verify(result.password, user.password);
+        console.log('val: ' + validate);
 
-  ctx.status = 200;
-  ctx.body = JSON.stringify({ user: _.omit(user, ['password']) }); // 把 password 給挑掉
+        ctx.assert(
+            validate,
+            401,
+            JSON.stringify({ errors: 'password is invalid' })
+        );
+        console.log(ctx);
+
+        user.name = result.name;
+
+        ctx.session.logined = true;
+        ctx.session.email = user.email;
+        ctx.session.name = user.name;
+        ctx.session.picture = user.picture;
+        await ctx.session.save();
+
+        ctx.status = 200;
+        var userResult = JSON.stringify({ user: _.omit(user, ['password']) }); // 把 password 給挑掉
+        ctx.body = JSON.parse(userResult);
+    } catch (err) {
+        ctx.status = err.status || 500;
+        ctx.body = JSON.parse(err.message);
+
+        console.log(`[${ctx.status}] ${err.message}`);
+    }
 };
 
 export default login;
