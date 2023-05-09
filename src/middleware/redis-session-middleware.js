@@ -1,9 +1,6 @@
 import redisStore from 'koa-redis';
 import Redis from 'ioredis';
-import * as dotenv from 'dotenv';
 import session from 'koa-session';
-
-dotenv.config({ path: `${process.cwd()}/config/.env.development` });
 
 const { REDIS_ACCOUNT, REDIS_PASSWORD, REDIS_HOST, REDIS_SESSION_PORT } =
   process.env;
@@ -11,12 +8,9 @@ const { REDIS_ACCOUNT, REDIS_PASSWORD, REDIS_HOST, REDIS_SESSION_PORT } =
 const redisClient = new Redis({
   host: REDIS_HOST,
   port: REDIS_SESSION_PORT,
-  // password: REDIS_PASSWORD,
-  // username: REDIS_ACCOUNT,
 });
 
 const redisSession = (app) => {
-  // eslint-disable-next-line no-param-reassign
   app.keys = ['session secret...'];
 
   const SESSION_CONFIG = {

@@ -1,10 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-console */
 import { MongoClient } from 'mongodb';
-import dotenv from 'dotenv';
 import { v4 as uuidv4 } from 'uuid';
-
-dotenv.config({ path: `${process.cwd()}/config/.env.development` });
 
 const {
   MONGO_INITDB_ROOT_USERNAME,
@@ -14,7 +11,7 @@ const {
 } = process.env;
 
 const mongoClient = new MongoClient(
-  `mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}`,
+  `mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}`
 );
 
 const owner = 'admin@gmail.com';
@@ -26,10 +23,11 @@ const flowId = `${owner}-flow-${uuidv4()}`;
 
 const nodeRepoData = [
   // 裡面先放 node 就好
-  { // 這是一個文件
+  {
+    // 這是一個文件
     user: owner,
     nodes: [
-      { 
+      {
         nodeId: nodeId.n1,
         type: 'CustomNode',
         editor: {
@@ -44,9 +42,9 @@ const nodeRepoData = [
           title: 'Presentation for ikala 0424',
           content: 'Model for popularity prediction: ...',
         },
-      }
-    ]
-  }
+      },
+    ],
+  },
 ];
 
 const nodeRefData = [
@@ -84,13 +82,12 @@ const flowData = [
       {
         flowId,
         flowName: 'template flow',
-        src:
-        'https://th.bing.com/th/id/R.fec70e3ffdf97ad56fdeac8b5b2c45a1?rik=ANrSnQB%2bW5vsSw&pid=ImgRaw&r=0',
+        src: 'https://th.bing.com/th/id/R.fec70e3ffdf97ad56fdeac8b5b2c45a1?rik=ANrSnQB%2bW5vsSw&pid=ImgRaw&r=0',
         owner,
         nodes: nodeRefData,
         edges: edgeData,
-      }
-    ]
+      },
+    ],
   },
 ];
 
@@ -98,17 +95,17 @@ const flowListData = [
   {
     user: owner,
     flowList: {
-      owner: [flowId]
-    }
-  }
-]
+      owner: [flowId],
+    },
+  },
+];
 
 async function seed() {
   try {
     const seeder = [
       ['nodeRepository', nodeRepoData],
       ['flows', flowData],
-      ['flowList', flowListData]
+      ['flowList', flowListData],
     ];
 
     seeder.forEach(async (element) => {
@@ -121,9 +118,9 @@ async function seed() {
       const collection = database.collection(place);
 
       const result = await collection.findOne({
-        user: owner
-      })
-      if(!result) {
+        user: owner,
+      });
+      if (!result) {
         await collection.insertMany(data);
       }
       await mongoClient.close();
