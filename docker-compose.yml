@@ -4,20 +4,21 @@ services:
   mongo:
     image: mongo:6.0.5
     restart: always
-    ports:
-      - ${MONGO_PORT}:${MONGO_PORT}
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_NOTEFLOW_USERNAME: ${MONGO_NOTEFLOW_USERNAME}
+      MONGO_NOTEFLOW_PASSWORD: ${MONGO_NOTEFLOW_PASSWORD}
       MONGO_INITDB_DATABASE: ${MONGO_DB}
     volumes:
       - mongodb_data:/data/db
       - mongodb_config:/data/configdb
+  
   mongo-express:
     image: mongo-express:latest
     restart: always
     ports:
-      - ${MONGO_EXPRESS_PORT}:${MONGO_EXPRESS_PORT}
+      - ${MONGO_EXPRESS_PORT}:8081
     environment:
       ME_CONFIG_MONGODB_SERVER: ${MONGO_HOST}
       ME_CONFIG_MONGODB_PORT: ${MONGO_PORT}
@@ -32,19 +33,16 @@ services:
 
   postgres:
     image: "postgres:14.5-alpine"
-    ports:
-      - $POSTGRES_PORT:$POSTGRES_PORT
     volumes:
       - data:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: $POSTGRES_DB
       POSTGRES_USER: $POSTGRES_USER
       POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+
   redis:
-    image: redis:alpine
+    image: redis:7.0
     restart: always
-    ports:
-      - 6379:6379
     volumes:
       - /data/redis-data:/data
 

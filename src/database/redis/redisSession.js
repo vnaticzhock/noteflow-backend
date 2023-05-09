@@ -1,11 +1,6 @@
 import redisStore from 'koa-redis';
-import * as dotenv from 'dotenv';
 import session from 'koa-session';
 import redisClient from './redisClient.js';
-
-dotenv.config({ path: `${process.cwd()}/config/.env.development` });
-const { REDIS_ACCOUNT, REDIS_PASSWORD, REDIS_HOST, REDIS_SESSION_PORT } =
-    process.env;
 
 const redisSession = (app) => {
     // eslint-disable-next-line no-param-reassign
