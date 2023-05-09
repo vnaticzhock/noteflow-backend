@@ -15,12 +15,11 @@ import fs from 'fs';
 import koaStatic from 'koa-static';
 import send from 'koa-send';
 
-import sharedb, { redisClient } from './database/sharedb.js';
+import sharedb from './database/mongodb/sharedb.js';
+import redisClient from './database/redis/redisClient.js';
 import routes from './routes/index.js';
-import redisSession, {
-    getSession,
-} from './middleware/redis-session-middleware.js';
-import { Flow, Node } from './database/model/index.js';
+import redisSession, { getSession } from './database/redis/redisSession.js';
+import { Flow, Node } from './database/mongodb/model/index.js';
 
 const app = new Koa();
 

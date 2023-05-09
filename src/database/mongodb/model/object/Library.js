@@ -3,50 +3,49 @@ import { getMongoClient } from '../../mongoClient.js';
 import NodeRepo from './NodeRepo.js';
 
 class Library {
-  constructor(user) {
-    Object.defineProperties(this, 'user', {
-      value: user,
-      writrable: false,
-    });
-    this.nodes = [];
-  }
-
-  static async genLibraryProfile() {
-    const result = {
-      user: this.user,
-      nodes: []
+    constructor(user) {
+        this.user = user;
+        this.nodes = [];
     }
 
-    const mongoClient = getMongoClient();
-    await mongoClient.connect();
-    const database = mongoClient.db('noteflow');
-    const collection = database.collection('library');
-    if(await collection.findOne({user: result.user})) {
-      return; // We have created for this user.
+    static async genLibraryProfile() {
+        const result = {
+            user: this.user,
+            nodes: [],
+        };
+
+        const mongoClient = getMongoClient();
+        await mongoClient.connect();
+        const database = mongoClient.db('noteflow');
+        const collection = database.collection('library');
+        if (await collection.findOne({ user: result.user })) {
+            return; // We have created for this user.
+        }
+        await collection.insertOne(result);
+
+        await mongoClient.close();
     }
-    await collection.insertOne(result);
 
-    await mongoClient.close();
-  }
+    async fetchNodes(query = { user: this.user }, options = {}) {
+        const { user } = query;
+        const mongoClient = getMongoClient();
+        // 不需要 try：有問題 controller 層會 catch
+        await mongoClient.connect();
+        const database = mongoClient.db('noteflow');
+        const collection = database.collection('library');
 
-  async fetchNodes(query = { user: this.userId }, options = {}) {
-    // 不需要 try：有問題 controller 層會 catch
-    await mongoClient.connect();
-    const database = mongoClient.db('noteflow');
-    const collection = database.collection('library');
+        // 先拿到 { userId: ..., nodes: ...}
+        const result = await collection.findOne(query, options);
+        await mongoClient.close();
 
-    // 先拿到 { userId: ..., nodes: ...}
-    const result = await collection.findOne(query, options);
-    await mongoClient.close();
+        const nodeRepo = new NodeRepo(user);
+        await nodeRepo.fetchNodes();
 
-    const nodeRepo = new NodeRepo(this.userId);
-    await nodeRepo.fetchNodes();
-
-    this.nodes = new Array(result.nodes.length);
-    result.nodes.forEach((element) => {
-      this.nodes.push(nodeRepo.nodes[element.ref]);
-    });
-  }
+        this.nodes = new Array(result.nodes.length);
+        result.nodes.forEach((element) => {
+            this.nodes.push(nodeRepo.nodes[element.ref]);
+        });
+    }
 }
 
 export default Library;

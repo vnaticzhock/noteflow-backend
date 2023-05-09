@@ -7,11 +7,6 @@ import db from '../../lib/db.js';
 import sendEmail from '../../lib/email.js';
 import crypto from 'crypto-js';
 import HTML_TEMPLATE from '../../lib/mail-template.js';
-import {
-    userSchema,
-    tokenSchema,
-} from '../../database/postgres/schemas/index.js';
-
 let { EMAIL_USER, EMAIL_HOST } = process.env;
 
 const register = async (ctx) => {
@@ -71,6 +66,7 @@ const register = async (ctx) => {
         ctx.status = 200;
         ctx.body = verifyMessage;
     } catch (err) {
+        console.log(err);
         ctx.status = err.status || 500;
         ctx.body = JSON.stringify({ errors: err.message });
     }
