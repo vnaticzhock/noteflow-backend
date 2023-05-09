@@ -15,12 +15,13 @@ import fs from 'fs';
 import koaStatic from 'koa-static';
 import send from 'koa-send';
 
-import sharedb, { redisClient } from './database/sharedb.js';
+
+import sharedb from './database/mongodb/sharedb.js';
+import redisClient from './database/redis/redisClient.js';
 import routes from './routes/index.js';
-import redisSession, {
-  getSession,
-} from './middleware/redis-session-middleware.js';
-import { Flow, Node } from './database/model/index.js';
+import redisSession, { getSession } from './database/redis/redisSession.js';
+import { Flow, Node } from './database/mongodb/model/index.js';
+
 
 const app = new Koa();
 
@@ -50,21 +51,24 @@ app.use(koaBody());
 app.use(routes.allowedMethods());
 
 const server = https.createServer(
-  {
-    key: fs.readFileSync('./config/cert/server.key'),
-    cert: fs.readFileSync('./config/cert/server.cert'),
-  },
-  app.callback()
+
+    {
+        key: fs.readFileSync('./config/cert/server.key'),
+        cert: fs.readFileSync('./config/cert/server.cert'),
+    },
+    app.callback()
 );
 
 const wsServer = new WebSocketServer({ server });
 
 app.use(async (ctx, next) => {
+
   if (server instanceof http.Server) {
     const { user } = ctx.request.body;
     ctx.session = user ? { ...user } : ctx.session;
   }
   await next();
+
 });
 
 app.use(routes.routes());
