@@ -1,11 +1,11 @@
 import Library from '../../database/model/object/Library.js';
 
 const getLibrary = async (ctx) => {
-  if (!ctx.session.account) {
+  if (!ctx.session.email) {
     ctx.throw(401, "Unauthorized. You haven't log in yet.");
   }
 
-  const library = new Library(ctx.session.account);
+  const library = new Library(ctx.session.email);
   try {
     await library.fetchNodes();
   } catch (err) {
