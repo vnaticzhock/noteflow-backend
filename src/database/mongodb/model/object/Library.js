@@ -8,12 +8,11 @@ class Library {
         this.nodes = [];
     }
 
-    static async genLibraryProfile() {
+    static async genLibraryProfile(email) {
         const result = {
-            user: this.user,
+            user: email,
             nodes: [],
         };
-
         const mongoClient = getMongoClient();
         await mongoClient.connect();
         const database = mongoClient.db('noteflow');

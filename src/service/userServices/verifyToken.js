@@ -3,7 +3,6 @@ import humps from 'humps';
 import _ from 'lodash';
 import argon2 from 'argon2';
 import db from '../../lib/db.js';
-import { createUserBucket } from '../../database/mongodb/model/index.js';
 
 const verifyToken = async (ctx) => {
     try {
@@ -28,7 +27,6 @@ const verifyToken = async (ctx) => {
             ctx.session.name = user.name;
             ctx.session.picture = user.picture;
             await ctx.session.save();
-            // await createUserBucket(user.email);
 
             const newUser = await db('users').first().where({ id: userId });
             ctx.status = 200;

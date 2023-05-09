@@ -1,5 +1,4 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import humps from 'humps';
 import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
 import argon2 from 'argon2';
@@ -7,6 +6,8 @@ import db from '../../lib/db.js';
 import sendEmail from '../../lib/email.js';
 import crypto from 'crypto-js';
 import HTML_TEMPLATE from '../../lib/mail-template.js';
+import { createUserBucket } from '../../database/mongodb/model/index.js';
+
 let { EMAIL_USER, EMAIL_HOST } = process.env;
 
 const register = async (ctx) => {
@@ -62,6 +63,8 @@ const register = async (ctx) => {
             from: EMAIL_USER,
             html: HTML_TEMPLATE(message),
         });
+
+        await createUserBucket(user.email);
 
         ctx.status = 200;
         ctx.body = verifyMessage;
