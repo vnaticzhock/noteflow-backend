@@ -1,5 +1,4 @@
 /* eslint-disable no-console */
-import sharedb from '../../sharedb.js';
 import { getMongoClient } from '../../mongoClient.js';
 import Node from './Node.js';
 import { v4 as uuidv4 } from 'uuid';

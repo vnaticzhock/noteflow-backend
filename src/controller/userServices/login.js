@@ -5,38 +5,43 @@ import { ValidationError } from 'yup';
 import db from '../../lib/db.js';
 
 const login = async (ctx) => {
-  const { user } = ctx.request.body;
-  ctx.assert(
-    _.isObject(user) && user.email && user.password,
-    422,
-    new ValidationError(['malformed request'], '', 'email or password')
-  );
+    try {
+        const { user } = ctx.request.body;
 
-  const result = await db('users').first().where({ email: user.email });
-  ctx.assert(
-    result,
-    401,
-    new ValidationError(['is invalid'], '', 'email or password')
-  );
+        ctx.assert(
+            _.isObject(user) && user.email && user.password,
+            422,
+            JSON.stringify({ errors: 'email or password input error' })
+        );
 
-  ctx.assert(
-    await argon2.verify(result.password, user.password),
-    401,
-    new ValidationError(['is invalid'], '', 'email or password')
-  );
+        const result = await db('users').first().where({ email: user.email });
+        ctx.assert(result, 401, JSON.stringify({ errors: 'email is invalid' }));
 
-  user.name = result.name;
+        var validate = await argon2.verify(result.password, user.password);
 
-  ctx.session = {
-    logined: true,
-    email: user.email,
-    name: user.name,
-    picture: user.picture ? user.picture : null,
-  };
-  await ctx.session.save();
+        ctx.assert(
+            validate,
+            401,
+            JSON.stringify({ errors: 'password is invalid' })
+        );
 
-  ctx.status = 200;
-  ctx.body = JSON.stringify({ user: _.omit(user, ['password']) }); // 把 password 給挑掉
+        user.name = result.name;
+
+        ctx.session = {
+            logined: true,
+            email: user.email,
+            name: user.name,
+            picture: user.picture,
+        };
+        await ctx.session.save();
+
+        ctx.status = 200;
+        ctx.body = JSON.stringify({ user: _.omit(user, ['password']) });
+        console.log(ctx.body);
+    } catch (err) {
+        ctx.status = err.status || 500;
+        ctx.body = JSON.stringify(err);
+    }
 };
 
 export default login;

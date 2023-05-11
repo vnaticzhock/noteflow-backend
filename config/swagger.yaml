@@ -370,8 +370,4 @@ paths:
             content:
               application/json:
                 example:
-<<<<<<< HEAD
                   errors: Unauthorized. You haven't log in yet.
-=======
-                  errors: Unauthorized. You haven't log in yet.
->>>>>>> mongodb

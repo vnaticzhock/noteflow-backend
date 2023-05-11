@@ -49,7 +49,7 @@ async function getSession(cookieString) {
         return null;
     }
 
-    return mapper;
+    return JSON.parse(mapper);
 }
 
 export default redisSession;

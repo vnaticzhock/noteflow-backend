@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable import/no-mutable-exports */
 import knex from 'knex';
-import knexfile from '../database/postgres/knexfile.js';
+import knexfile from '../model/postgres/knexfile.js';
 
 let db;
 

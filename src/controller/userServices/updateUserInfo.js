@@ -3,7 +3,7 @@ import humps from 'humps';
 import _ from 'lodash';
 import argon2 from 'argon2';
 import db from '../../lib/db.js';
-import { userSchema } from '../../database/postgres/schemas/index.js';
+import { userSchema } from '../../model/postgres/schemas/index.js';
 
 const updateUserInfo = async (ctx) => {
     const { body } = ctx.request;
