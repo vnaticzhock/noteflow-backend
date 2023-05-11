@@ -10,6 +10,10 @@ const {
     POSTGRES_PASSWORD,
 } = process.env;
 
+console.log(
+    `postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}`
+);
+
 export default {
     test: {
         client: 'pg',

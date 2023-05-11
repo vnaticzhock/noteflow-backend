@@ -11,10 +11,10 @@
       "test:coverage": "set NODE_ENV=test && jest --coverage --detectOpenHandles",
       "format": "prettier --config .prettierrc \"**/*.+(js|json)\" --write",
       "lint": "eslint src/**/*.js --fix && eslint tests/**/*.js --fix",
-      "db:migrate": "knex --knexfile src/database/postgres/knexfile.js migrate:latest",
-      "db:seed": "knex --knexfile src/database/postgres/knexfile.js seed:run",
-      "db:rollback": "knex --knexfile src/database/postgres/knexfile.js migrate:rollback",
-      "mongo:seed": "node src/database/mongodb/seeds/node-repo.js"
+      "db:migrate": "knex --knexfile src/model/postgres/knexfile.js migrate:latest",
+      "db:seed": "knex --knexfile src/model/postgres/knexfile.js seed:run",
+      "db:rollback": "knex --knexfile src/model/postgres/knexfile.js migrate:rollback",
+      "mongo:seed": "node src/model/mongodb/seeds/node-repo.js"
   },
   "author": "sdm-group-6",
   "license": "ISC",
