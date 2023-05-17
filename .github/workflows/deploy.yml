@@ -22,4 +22,7 @@ jobs:
       run: |
         # 这里可以编写部署到本地计算机的自定义脚本
         # 例如使用 SSH 连接到您的计算机并执行部署命令
-        # ssh user@your-machine-ip "cd /path/to/project && npm install && npm run build"
+        # ssh user@your-machine-ip "cd /path/to/project && \ 
+        # git fetch && \
+        # npm install && \
+        # npm run build"
