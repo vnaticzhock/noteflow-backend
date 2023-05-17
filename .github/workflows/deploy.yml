@@ -1,0 +1,25 @@
+name: Deploy to Local Machine
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '14'
+
+    - name: Deploy to Local Machine
+      run: |
+        # 这里可以编写部署到本地计算机的自定义脚本
+        # 例如使用 SSH 连接到您的计算机并执行部署命令
+        ssh user@your-machine-ip "cd /path/to/project && npm install && npm run build"
